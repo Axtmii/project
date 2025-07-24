@@ -1,0 +1,636 @@
+{% extends "base.html" %}
+{% block title %}Welcome to E-Prison Access{% endblock %}
+{% block content %}
+
+<!-- Hero Section -->
+<div class="hero-section mb-4" id="home">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-6 order-2 order-lg-1">
+            <div class="hero-content">
+                <div class="hero-badge mb-3">
+                    <span class="badge px-3 py-2 rounded-pill">
+                        <i class="fas fa-shield-alt me-2"></i>Secure & Reliable
+                    </span>
+                </div>
+                <h1 class="hero-title display-4 fw-bold mb-4">
+                    Smart Prison 
+                    <span class="text-gradient">Visitor Management</span>
+                </h1>
+                <p class="hero-description lead mb-4">
+                    Revolutionize prison visits with our comprehensive digital platform. 
+                    Enable secure scheduling, emergency requests, and seamless verification 
+                    through advanced QR technology and photo authentication.
+                </p>
+                <div class="hero-stats row g-3 mb-4">
+                    <div class="col-4">
+                        <div class="stat-item text-center">
+                            <div class="stat-number h4 fw-bold text-primary mb-1">100%</div>
+                            <div class="stat-label small text-muted">Secure</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-item text-center">
+                            <div class="stat-number h4 fw-bold text-success mb-1">24/7</div>
+                            <div class="stat-label small text-muted">Available</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-item text-center">
+                            <div class="stat-number h4 fw-bold text-info mb-1">Fast</div>
+                            <div class="stat-label small text-muted">Processing</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-actions d-flex flex-wrap gap-3">
+                    {% if not user.is_authenticated %}
+                        {% comment %} <a href="{% url 'visitor_login' %}" class="btn btn-primary btn-lg px-4 py-3 rounded-3">
+                            <i class="fas fa-rocket me-2"></i>Get Started
+                        </a> {% endcomment %}
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg px-4 py-3 rounded-3">
+                            <i class="fas fa-user-plus me-2"></i>Register Now
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-success btn-lg px-4 py-3 rounded-3">
+                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                        </a>
+                        <a href="#features" class="btn btn-outline-primary btn-lg px-4 py-3 rounded-3">
+                            <i class="fas fa-info-circle me-2"></i>Learn More
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 order-1 order-lg-2">
+            <div class="hero-image-container">
+                <div class="hero-image-wrapper">
+                    <img src="https://media.premiumtimesng.com/wp-content/files/2023/10/Symbol-of-law-and-justice-1.jpg" 
+                         alt="Prison Visitor Management" class="hero-image img-fluid">
+                    <div class="hero-image-overlay">
+                        <div class="floating-card">
+                            <i class="fas fa-qrcode text-primary mb-2"></i>
+                            <div class="small fw-semibold">QR Verification</div>
+                            <div class="text-muted small">Instant & Secure</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section id="features" class="features-section mb-4">
+    <div class="text-center mb-5">
+        <div class="section-badge mb-3">
+            <span class="badge px-3 py-2 rounded-pill">
+                <i class="fas fa-star me-2"></i>Key Features
+            </span>
+        </div>
+        <h2 class="section-title display-6 fw-bold mb-3">
+            Everything You Need for 
+            <span class="text-gradient">Secure Visits</span>
+        </h2>
+        <p class="section-description lead text-muted mb-0">
+            Our comprehensive platform streamlines every aspect of prison visitor management
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card h-100">
+                <div class="feature-card-inner">
+                    <div class="feature-icon-wrapper mb-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                    </div>
+                    <h5 class="feature-title fw-bold mb-3">Secure Registration</h5>
+                    <p class="feature-description text-muted mb-4">
+                        Advanced identity verification with photo uploads and ID proof validation 
+                        ensures only authorized visitors gain access to the facility.
+                    </p>
+                    <div class="feature-benefits">
+                        <div class="benefit-item d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Photo verification</span>
+                        </div>
+                        <div class="benefit-item d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">ID proof validation</span>
+                        </div>
+                        <div class="benefit-item d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Background screening</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card h-100 featured">
+                <div class="feature-card-inner">
+                    <div class="feature-badge">
+                        <span class="badge bg-warning text-dark px-2 py-1 small">Priority</span>
+                    </div>
+                    <div class="feature-icon-wrapper mb-4">
+                        <div class="feature-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <h5 class="feature-title fw-bold mb-3">Emergency Visits</h5>
+                    <p class="feature-description text-muted mb-4">
+                        Fast-track emergency visit requests for family members during critical 
+                        situations with streamlined admin approval processes.
+                    </p>
+                    <div class="feature-benefits">
+                        <div class="benefit-item d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Priority processing</span>
+                        </div>
+                        <div class="benefit-item d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Admin notifications</span>
+                        </div>
+                        <div class="benefit-item d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">24/7 availability</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card h-100">
+                <div class="feature-card-inner">
+                    <div class="feature-icon-wrapper mb-4">
+                        <div class="feature-icon info">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                    <h5 class="feature-title fw-bold mb-3">QR Code Verification</h5>
+                    <p class="feature-description text-muted mb-4">
+                        Instant visitor verification at entry points using secure QR codes 
+                        combined with photo ID matching for maximum security.
+                    </p>
+                    <div class="feature-benefits">
+                        <div class="benefit-item d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Instant scanning</span>
+                        </div>
+                        <div class="benefit-item d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Photo matching</span>
+                        </div>
+                        <div class="benefit-item d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2 small"></i>
+                            <span class="small text-muted">Digital logs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process Section -->
+<section class="process-section mb-4">
+    <div class="text-center mb-5">
+        <div class="section-badge mb-3">
+            <span class="badge px-3 py-2 rounded-pill">
+                <i class="fas fa-route me-2"></i>How It Works
+            </span>
+        </div>
+        <h2 class="section-title display-6 fw-bold mb-3">Simple 3-Step Process</h2>
+        <p class="section-description lead text-muted">
+            Get started with your prison visit in just three easy steps
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="process-step text-center">
+                <div class="step-number">1</div>
+                <div class="step-icon mb-3">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h5 class="step-title fw-bold mb-3">Register & Verify</h5>
+                <p class="step-description text-muted">
+                    Create your account with photo upload and ID verification for secure access
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="process-step text-center">
+                <div class="step-number">2</div>
+                <div class="step-icon mb-3">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h5 class="step-title fw-bold mb-3">Schedule Visit</h5>
+                <p class="step-description text-muted">
+                    Book your visit slot or request emergency visits through our platform
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="process-step text-center">
+                <div class="step-number">3</div>
+                <div class="step-icon mb-3">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h5 class="step-title fw-bold mb-3">Scan & Enter</h5>
+                <p class="step-description text-muted">
+                    Present your QR code at the facility for instant verification and entry
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="text-center">
+        <div class="section-badge mb-3">
+            <span class="badge px-3 py-2 rounded-pill">
+                <i class="fas fa-rocket me-2"></i>Get Started Today
+            </span>
+        </div>
+        <h2 class="section-title display-6 fw-bold mb-3">
+            Ready to Experience 
+            <span class="text-gradient">Seamless Visits?</span>
+        </h2>
+        <p class="section-description lead text-muted mb-4">
+            Join thousands of families who trust our secure platform for their prison visits
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-5 py-3 rounded-3">
+                    <i class="fas fa-user-plus me-2"></i>Create Account
+                </a>
+                <a href="{% url 'visitor_login' %}" class="btn btn-outline-primary btn-lg px-5 py-3 rounded-3">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                </a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-success btn-lg px-5 py-3 rounded-3">
+                    <i class="fas fa-tachometer-alt me-2"></i>View Dashboard
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<style>
+/* Enhanced styles for sections to match base template */
+.hero-section,
+.features-section,
+.process-section,
+.cta-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.features-section {
+    animation-delay: 0.2s;
+}
+
+.process-section {
+    animation-delay: 0.4s;
+}
+
+.cta-section {
+    animation-delay: 0.6s;
+}
+
+/* Gradient top borders for each section */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), #a78bfa, #ec4899);
+    border-radius: 1rem 1rem 0 0;
+}
+
+.features-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+    border-radius: 1rem 1rem 0 0;
+}
+
+.process-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ec4899, var(--primary-color));
+    border-radius: 1rem 1rem 0 0;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #fbbf24, var(--primary-color));
+    border-radius: 1rem 1rem 0 0;
+}
+
+/* Hero Section Styles */
+.hero-badge .badge {
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: rgba(37, 99, 235, 0.1) !important;
+    color: var(--primary-color) !important;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.hero-title {
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--secondary-color);
+}
+
+.hero-stats {
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+}
+
+.hero-image-container {
+    position: relative;
+}
+
+.hero-image-wrapper {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.hero-image-wrapper:hover .hero-image {
+    transform: scale(1.05);
+}
+
+.hero-image-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.floating-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    animation: float 3s ease-in-out infinite;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Section Badges */
+.section-badge .badge {
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: rgba(15, 23, 42, 0.1) !important;
+    color: var(--dark-color) !important;
+    border: 1px solid rgba(15, 23, 42, 0.2);
+}
+
+.section-title {
+    line-height: 1.3;
+    color: var(--dark-color);
+}
+
+/* Feature Cards */
+.feature-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card.featured {
+    background: rgba(255, 248, 220, 0.9);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.feature-card.featured::before {
+    background: linear-gradient(90deg, #ffc107, #ff8f00);
+    opacity: 1;
+}
+
+.feature-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.feature-icon-wrapper {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.feature-icon.warning {
+    background: linear-gradient(135deg, #ffc107, #ff8f00);
+}
+
+.feature-icon.info {
+    background: linear-gradient(135deg, #17a2b8, #007bff);
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.feature-description {
+    line-height: 1.6;
+    color: var(--secondary-color);
+}
+
+.benefit-item {
+    font-size: 0.875rem;
+}
+
+/* Process Steps */
+.process-step {
+    position: relative;
+    padding: 2rem 1rem;
+}
+
+.step-number {
+    position: absolute;
+    top: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.25rem;
+    box-shadow: var(--shadow-lg);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.step-icon {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.step-icon i {
+    font-size: 2.5rem;
+    color: #667eea;
+}
+
+.step-title {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.step-description {
+    line-height: 1.6;
+    color: var(--secondary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .hero-actions {
+        justify-content: center;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
+    
+    .floating-card {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+    }
+
+    .hero-section,
+    .features-section,
+    .process-section,
+    .cta-section {
+        padding: 2rem 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+{% endblock %}

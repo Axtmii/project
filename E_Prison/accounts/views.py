@@ -23,7 +23,8 @@ def user_logout(request):
     logout(request)
     return redirect("visitor_login")  # Redirect to visitor login after logout
 
-
+def home(request):
+    return render(request, "accounts/home.html")
 
 @login_required
 def dashboard(request):
