@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Visitor Dashboard{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>Welcome {{ user.username }}</h4>
+            </div>
+            <div class="card-body text-center">
+                {% if user.profile_photo %}
+                    <img src="{{ user.profile_photo.url }}" class="rounded-circle shadow mb-3" width="120">
+                {% endif %}
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Role:</strong> {{ user.get_role_display }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Visitor Registration{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>Visitor Registration</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Full Name</label>
+                        <input type="text" name="full_name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Address</label>
+                        <textarea name="address" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Password</label>
+                        <input type="password" name="password1" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Confirm Password</label>
+                        <input type="password" name="password2" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Profile Photo</label>
+                        <input type="file" name="profile_photo" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>ID Proof (Aadhar/Driving License etc.)</label>
+                        <input type="file" name="id_proof" class="form-control" required>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="is_family_member" id="familyCheck">
+                        <label class="form-check-label" for="familyCheck">I am a family member</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% if form.errors %}
+<div class="alert alert-danger">
+    <ul>
+    {% for field in form %}
+        {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+
+{% endblock %}
