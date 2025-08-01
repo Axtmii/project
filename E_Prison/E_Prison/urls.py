@@ -15,15 +15,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+# E_Prison/urls.py
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from accounts.views import landing_page
 
 urlpatterns = [
+    # Public landing page is the root
+    path('', landing_page, name='landing_page'),
+
+    # Django admin site
     path('admin/', admin.site.urls),
+    
+    # Include app-specific URLs
     path('accounts/', include('accounts.urls')),
+    path('prison-core/', include('prison_core.urls')),
+    path('visitor-management/', include('visitor_management.urls')),
 ]
 
+# Serve media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

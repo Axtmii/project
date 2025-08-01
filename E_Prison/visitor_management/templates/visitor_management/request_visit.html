@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Request a Visit{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="bi bi-search"></i> Find a Prisoner</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">First, select a facility and search for the prisoner by their first name.</p>
+                <form method="get" action="{% url 'request_visit' %}">
+                    <div class="mb-3">
+                        <label for="jail" class="form-label">Select Facility</label>
+                        <select name="jail" id="jail" class="form-select" required>
+                            <option value="">-- Choose a Facility --</option>
+                            {% for jail in jails %}
+                            <option value="{{ jail.id }}" {% if jail.id|stringformat:"s" == selected_jail %}selected{% endif %}>{{ jail.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prisoner_name" class="form-label">Prisoner's First Name</label>
+                        <input type="text" name="prisoner_name" id="prisoner_name" class="form-control" value="{{ search_query|default:'' }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <h4>Search Results</h4>
+        {% if prisoners %}
+            {% for prisoner in prisoners %}
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if prisoner.photo %}
+                            <img src="{{ prisoner.photo.url }}" class="rounded-circle me-3" alt="Photo" width="60" height="60">
+                        {% else %}
+                            <i class="bi bi-person-circle fs-1 me-3 text-secondary"></i>
+                        {% endif %}
+                        <div>
+                            <h5 class="card-title mb-0">{{ prisoner.first_name }} {{ prisoner.last_name }}</h5>
+                            <p class="card-text text-muted">Prisoner ID: {{ prisoner.prisoner_id }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Request a Visit with this Prisoner</h5>
+                    <form method="post" action="{% url 'request_visit' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="prisoner_id" value="{{ prisoner.id }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="visit_date" class="form-label">Select Date</label>
+                                <input type="date" name="visit_date" class="form-control" required min="{% now 'Y-m-d' %}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="time_slot" class="form-label">Select Time Slot</label>
+                                <select name="time_slot" class="form-select" required>
+                                    <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                                    <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                                    <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" name="visit_type" value="REGULAR" class="btn btn-success">
+                            <i class="bi bi-calendar-check"></i> Submit Regular Request
+                        </button>
+
+                        {% if can_request_emergency %}
+                        <button type="submit" name="visit_type" value="EMERGENCY" class="btn btn-danger ms-2">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Submit Emergency Request
+                        </button>
+                        <small class="d-block text-muted mt-2">Emergency requests are for family members only and are subject to a 20-day cooldown period.</small>
+                        {% endif %}
+                        </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                Please use the form on the left to search for a prisoner.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Review Visit Details{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Review Visit Request</h2>
+    <a href="{% url 'review_visits' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="card shadow-lg">
+    <div class="card-header bg-light">
+        <h4>Request #{{ visit.id }} - Status: <span class="text-warning">Pending</span></h4>
+    </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <!-- Visitor Details Column -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-person-badge"></i> Visitor Details</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        {% if visit.visitor.profile_photo %}
+                            <img src="{{ visit.visitor.profile_photo.url }}" class="rounded-circle shadow mb-3" width="120" height="120" alt="Visitor Photo">
+                        {% else %}
+                            <i class="bi bi-person-circle fs-1 text-secondary mb-3"></i>
+                        {% endif %}
+                        
+                        <h5 class="card-title">{{ visit.visitor.full_name|default:visit.visitor.username }}</h5>
+                        <p class="text-muted">{{ visit.visitor.email }}</p>
+                        <hr>
+                        <p><strong>Address:</strong> {{ visit.visitor.address }}</p>
+
+                        {% if visit.visitor.id_proof %}
+                            <a href="{{ visit.visitor.id_proof.url }}" class="btn btn-outline-primary" target="_blank">
+                                <i class="bi bi-file-earmark-person"></i> View ID Proof
+                            </a>
+                        {% else %}
+                            <p class="text-danger">No ID Proof Uploaded</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visit & Prisoner Details Column -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-calendar-check"></i> Visit Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Prisoner to Visit:</h6>
+                        <p>{{ visit.prisoner.first_name }} {{ visit.prisoner.last_name }} (ID: {{ visit.prisoner.prisoner_id }})</p>
+                        
+                        <h6>Requested Date & Time:</h6>
+                        <p>{{ visit.visit_date }} at {{ visit.visit_time_slot }}</p>
+                        
+                        <h6>Facility:</h6>
+                        <p>{{ visit.prisoner.jail.name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-center">
+        <h4>Take Action</h4>
+        <p>After reviewing the details, approve or reject this request.</p>
+        <a href="{% url 'decide_visit' visit.id 'approve' %}" class="btn btn-lg btn-success">
+            <i class="bi bi-check-lg"></i> Approve Request
+        </a>
+        <a href="{% url 'decide_visit' visit.id 'reject' %}" class="btn btn-lg btn-danger">
+            <i class="bi bi-x-lg"></i> Reject Request
+        </a>
+    </div>
+</div>
+{% endblock %}

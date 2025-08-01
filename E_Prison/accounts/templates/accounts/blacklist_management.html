@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Blacklist Management{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Add to Blacklist Form -->
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="bi bi-person-fill-slash"></i> Blacklist a User</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'add_to_blacklist' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="user_id" class="form-label">Select User to Blacklist</label>
+                        <select name="user_id" id="user_id" class="form-select" required>
+                            <option value="">-- Choose a Visitor --</option>
+                            {% for user in non_blacklisted_users %}
+                                <option value="{{ user.id }}">{{ user.full_name|default:user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Reason for Blacklisting</label>
+                        <textarea name="reason" id="reason" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100">Add to Blacklist</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blacklisted Users List -->
+    <div class="col-md-8">
+        <h4>Currently Blacklisted Users</h4>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in blacklisted_users %}
+                        <tr>
+                            <td>{{ entry.user.full_name|default:entry.user.username }}</td>
+                            <td>{{ entry.reason }}</td>
+                            <td>
+                                <a href="{% url 'remove_from_blacklist' entry.pk %}" class="btn btn-sm btn-outline-secondary">Remove</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No users are currently blacklisted.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

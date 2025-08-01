@@ -65,3 +65,79 @@ def staff_login(request):
         else:
             messages.error(request, "Invalid staff credentials")
     return render(request, "accounts/staff_login.html")
+
+from django.shortcuts import render
+
+
+def landing_page(request):
+    """
+    Renders the public-facing landing page for the application.
+    
+    If the user is already authenticated, it redirects them straight 
+    to their dashboard to improve user experience.
+    """
+    if request.user.is_authenticated:
+        # This line causes the redirect for logged-in users.
+        return redirect('dashboard')
+    
+    # Unauthenticated users will see the landing page.
+    return render(request, 'landing_page.html')
+
+# accounts/views.py
+
+from .models import User, Blacklist
+from accounts.decorators import admin_required
+# ... (other imports) ...
+from django.shortcuts import get_object_or_404
+
+
+@login_required
+@admin_required
+def blacklist_list(request):
+    """ Displays a list of all blacklisted users. """
+    blacklisted_users = Blacklist.objects.select_related('user', 'blacklisted_by').all()
+    
+    # Also get a list of users who are not yet blacklisted to add them
+    non_blacklisted_users = User.objects.filter(
+        role__in=['visitor', 'family'], 
+        blacklist_entry__isnull=True
+    )
+
+    context = {
+        'blacklisted_users': blacklisted_users,
+        'non_blacklisted_users': non_blacklisted_users
+    }
+    return render(request, 'accounts/blacklist_management.html', context)
+
+
+@login_required
+@admin_required
+def add_to_blacklist(request):
+    """ Handles the submission to add a user to the blacklist. """
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        reason = request.POST.get('reason')
+
+        if not user_id or not reason:
+            messages.error(request, "User and reason are required.")
+            return redirect('blacklist_list')
+            
+        user_to_blacklist = get_object_or_404(User, id=user_id)
+        
+        Blacklist.objects.create(
+            user=user_to_blacklist,
+            reason=reason,
+            blacklisted_by=request.user
+        )
+        messages.success(request, f"User {user_to_blacklist.username} has been successfully blacklisted.")
+    return redirect('blacklist_list')
+
+@login_required
+@admin_required
+def remove_from_blacklist(request, pk):
+    """ Removes a user from the blacklist. """
+    blacklist_entry = get_object_or_404(Blacklist, pk=pk)
+    username = blacklist_entry.user.username
+    blacklist_entry.delete()
+    messages.info(request, f"User {username} has been removed from the blacklist.")
+    return redirect('blacklist_list')

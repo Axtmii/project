@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Review Visit Requests{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Pending Visit Requests for {{ user.jail.name }}</h2>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Visitor Name</th>
+                    <th>Prisoner Name</th>
+                    <th>Requested Date</th>
+                    <th>Time Slot</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visit in visits %}
+                <tr>
+                    <td>{{ visit.visitor.full_name|default:visit.visitor.username }}</td>
+                    <td>{{ visit.prisoner.first_name }} {{ visit.prisoner.last_name }}</td>
+                    <td>{{ visit.visit_date }}</td>
+                    <td>{{ visit.visit_time_slot }}</td>
+                    <td class="text-end">
+                        <!-- This now links to the new detail page -->
+                        <a href="{% url 'visit_detail_review' visit.id %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-search"></i> Review Details
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                        <h4 class="text-muted">No pending visit requests.</h4>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
