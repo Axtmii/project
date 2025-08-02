@@ -1,29 +1,24 @@
-{% extends "base.html" %}
+{% extends "accounts/auth_base.html" %}
 {% block title %}Staff Login{% endblock %}
+
 {% block content %}
-
-<div class="row justify-content-center">
-    <div class="col-md-4">
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-dark text-white text-center">
-                <h4>Staff Login</h4>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-dark w-100">Login</button>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="auth-header" style="background: linear-gradient(135deg, #1e2125 0%, #2c3036 100%); color: white; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+    <i class="bi bi-shield-lock fs-1"></i>
+    <h3>Staff & Admin Portal</h3>
+    <p style="color: #adb5bd;">Authorized access only.</p>
 </div>
-
+<div class="card-body px-4 pb-4">
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="username" required>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-dark w-100">Login Securely</button>
+    </form>
+</div>
 {% endblock %}

@@ -1,29 +1,27 @@
-{% extends "base.html" %}
+{% extends "accounts/auth_base.html" %}
 {% block title %}Visitor Login{% endblock %}
-{% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-md-4">
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-success text-white text-center">
-                <h4>Visitor Login</h4>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Login</button>
-                </form>
-            </div>
+{% block content %}
+<div class="auth-header">
+    <i class="bi bi-building-lock fs-1 text-primary"></i>
+    <h3>Visitor Login</h3>
+    <p class="text-muted">Welcome back. Please enter your credentials.</p>
+</div>
+<div class="card-body px-4 pb-4">
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="username" required>
         </div>
+        <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <div class="text-center mt-4">
+        <p class="text-muted">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
     </div>
 </div>
-
 {% endblock %}
