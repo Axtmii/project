@@ -72,30 +72,23 @@ def prisoner_list(request):
     prisoners = Prisoner.objects.filter(jail=request.user.jail)
     return render(request, 'prison_core/prisoner_list.html', {'prisoners': prisoners, 'jail': request.user.jail})
 
+from .forms import PrisonerForm # Add this import
+
 @login_required
 @admin_required
 def prisoner_create(request):
-    """
-    Creates a new prisoner record, automatically assigning them to the admin's jail.
-    """
     if request.method == 'POST':
-        # Custom form handling to auto-assign the jail
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        prisoner_id = request.POST.get('prisoner_id')
-        # ... get other fields ...
+        form = PrisonerForm(request.POST, request.FILES)
+        if form.is_valid():
+            prisoner = form.save(commit=False)
+            prisoner.jail = request.user.jail # Assign the admin's jail
+            prisoner.save()
+            messages.success(request, "Prisoner created successfully.")
+            return redirect('prisoner_list')
+    else:
+        form = PrisonerForm()
         
-        Prisoner.objects.create(
-            jail=request.user.jail,
-            first_name=first_name,
-            last_name=last_name,
-            prisoner_id=prisoner_id,
-            # ... assign other fields ...
-        )
-        messages.success(request, "Prisoner created successfully.")
-        return redirect('prisoner_list')
-        
-    return render(request, 'prison_core/prisoner_form.html')
+    return render(request, 'prison_core/prisoner_form.html', {'form': form})
 
 
 @login_required

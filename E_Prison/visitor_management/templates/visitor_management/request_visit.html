@@ -1,91 +1,485 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Request a Visit{% endblock %}
+{% block page_title %}Request Prison Visit{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Dark Prison Theme - Visit Request */
+:root {
+    --bg-dark: #1a1a1a;
+    --bg-card: #2d2d2d;
+    --bg-input: #404040;
+    --bg-accent: #333;
+    --border: #666;
+    --text-white: #ffffff;
+    --text-muted: #cccccc;
+    --text-gray: #aaaaaa;
+    --primary: #0066cc;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+}
+
+body {
+    background: var(--bg-dark) !important;
+    color: var(--text-white) !important;
+}
+
+.search-container {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-accent) 100%);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-top: 4px solid var(--primary);
+}
+
+.search-container h3 {
+    color: var(--text-white);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.search-container p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-white) !important;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-input) !important;
+    border: 2px solid var(--border) !important;
+    color: var(--text-white) !important;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-input) !important;
+    border-color: var(--primary) !important;
+    color: var(--text-white) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+.form-select option {
+    background: var(--bg-input);
+    color: var(--text-white);
+}
+
+.btn-primary {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #0056b3 !important;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: var(--success) !important;
+    border-color: var(--success) !important;
+    color: white !important;
+    font-weight: 500;
+}
+
+.btn-warning {
+    background: var(--warning) !important;
+    border-color: var(--warning) !important;
+    color: #000 !important;
+    font-weight: 500;
+}
+
+.btn-light {
+    background: var(--text-white) !important;
+    border-color: var(--text-white) !important;
+    color: var(--bg-dark) !important;
+    font-weight: 600;
+}
+
+.btn-light:hover {
+    background: var(--text-muted) !important;
+    transform: translateY(-1px);
+}
+
+.prisoner-card {
+    background: var(--bg-card) !important;
+    border: 2px solid var(--border) !important;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.prisoner-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.prisoner-card .card-body {
+    background: transparent;
+    color: var(--text-white);
+}
+
+.prisoner-card .card-title {
+    color: var(--text-white);
+    font-weight: 600;
+}
+
+.prisoner-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.border-top {
+    border-color: var(--border) !important;
+}
+
+.emergency-info {
+    background: rgba(255, 193, 7, 0.1) !important;
+    border: 2px solid var(--warning);
+    border-left: 4px solid var(--warning);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+.emergency-info h6 {
+    color: var(--warning);
+    font-weight: 600;
+}
+
+.emergency-info ul, .emergency-info li {
+    color: var(--text-muted);
+}
+
+.form-text {
+    color: var(--text-gray) !important;
+}
+
+.loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
+.results-container {
+    min-height: 300px;
+}
+
+/* Info boxes */
+.info-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.info-state i {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.info-state h4 {
+    color: var(--text-white);
+    margin: 1rem 0;
+}
+
+.info-state p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-container {
+        padding: 1.5rem;
+    }
+    
+    .search-container h3 {
+        font-size: 1.3rem;
+    }
+    
+    .prisoner-photo {
+        width: 60px;
+        height: 60px;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-    <div class="col-lg-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4><i class="bi bi-search"></i> Find a Prisoner</h4>
+<div class="container-fluid">
+    <!-- Search Section -->
+    <div class="search-container">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <h3><i class="bi bi-search me-2"></i>Find Prisoner</h3>
+                <p>Search for the prisoner you want to visit by selecting facility and entering their name.</p>
             </div>
-            <div class="card-body">
-                <p class="text-muted">First, select a facility and search for the prisoner by their first name.</p>
-                <form method="get" action="{% url 'request_visit' %}">
-                    <div class="mb-3">
-                        <label for="jail" class="form-label">Select Facility</label>
-                        <select name="jail" id="jail" class="form-select" required>
-                            <option value="">-- Choose a Facility --</option>
-                            {% for jail in jails %}
-                            <option value="{{ jail.id }}" {% if jail.id|stringformat:"s" == selected_jail %}selected{% endif %}>{{ jail.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="prisoner_name" class="form-label">Prisoner's First Name</label>
-                        <input type="text" name="prisoner_name" id="prisoner_name" class="form-control" value="{{ search_query|default:'' }}" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Search</button>
-                </form>
+            <div class="col-md-4 text-end">
+                <i class="bi bi-person-lines-fill display-1 text-primary"></i>
             </div>
         </div>
-    </div>
-
-    <div class="col-lg-8">
-        <h4>Search Results</h4>
-        {% if prisoners %}
-            {% for prisoner in prisoners %}
-            <div class="card shadow-sm mb-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        {% if prisoner.photo %}
-                            <img src="{{ prisoner.photo.url }}" class="rounded-circle me-3" alt="Photo" width="60" height="60">
-                        {% else %}
-                            <i class="bi bi-person-circle fs-1 me-3 text-secondary"></i>
-                        {% endif %}
-                        <div>
-                            <h5 class="card-title mb-0">{{ prisoner.first_name }} {{ prisoner.last_name }}</h5>
-                            <p class="card-text text-muted">Prisoner ID: {{ prisoner.prisoner_id }}</p>
-                        </div>
-                    </div>
-                    <hr>
-                    <h5>Request a Visit with this Prisoner</h5>
-                    <form method="post" action="{% url 'request_visit' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="prisoner_id" value="{{ prisoner.id }}">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="visit_date" class="form-label">Select Date</label>
-                                <input type="date" name="visit_date" class="form-control" required min="{% now 'Y-m-d' %}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="time_slot" class="form-label">Select Time Slot</label>
-                                <select name="time_slot" class="form-select" required>
-                                    <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                                    <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
-                                    <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <button type="submit" name="visit_type" value="REGULAR" class="btn btn-success">
-                            <i class="bi bi-calendar-check"></i> Submit Regular Request
-                        </button>
-
-                        {% if can_request_emergency %}
-                        <button type="submit" name="visit_type" value="EMERGENCY" class="btn btn-danger ms-2">
-                            <i class="bi bi-exclamation-triangle-fill"></i> Submit Emergency Request
-                        </button>
-                        <small class="d-block text-muted mt-2">Emergency requests are for family members only and are subject to a 20-day cooldown period.</small>
-                        {% endif %}
-                        </form>
+        
+        <form id="search-form" method="get">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label for="jail" class="form-label">
+                        <i class="bi bi-building me-2"></i>Select Facility
+                    </label>
+                    <select name="jail" id="jail" class="form-select" required>
+                        <option value="">-- Choose Facility --</option>
+                        {% for jail in jails %}
+                        <option value="{{ jail.id }}" {% if jail.id|stringformat:"s" == selected_jail %}selected{% endif %}>
+                            {{ jail.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="prisoner_name" class="form-label">
+                        <i class="bi bi-person me-2"></i>Prisoner Name
+                    </label>
+                    <input type="text" name="prisoner_name" id="prisoner_name" 
+                           class="form-control" 
+                           value="{{ search_query|default:'' }}" 
+                           placeholder="Enter first name" required>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-light w-100" id="search-btn">
+                        <i class="bi bi-search me-2"></i>Search
+                    </button>
                 </div>
             </div>
-            {% endfor %}
+        </form>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <p>Searching for prisoners...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-container">
+        {% if search_query and selected_jail %}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-person-check me-2"></i>Search Results</h4>
+                <div class="text-muted">
+                    Found {{ prisoners|length }} prisoner{{ prisoners|length|pluralize }} matching "{{ search_query }}"
+                </div>
+            </div>
+        {% endif %}
+
+        {% if prisoners %}
+            <div class="row">
+                {% for prisoner in prisoners %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card prisoner-card h-100">
+                        <div class="card-body">
+                            <!-- Prisoner Info -->
+                            <div class="d-flex align-items-start mb-4">
+                                {% if prisoner.photo %}
+                                    <img src="{{ prisoner.photo.url }}" class="prisoner-photo me-3" alt="Photo">
+                                {% else %}
+                                    <div class="prisoner-photo me-3 bg-secondary d-flex align-items-center justify-content-center text-white fs-4">
+                                        {{ prisoner.first_name|first }}{{ prisoner.last_name|first }}
+                                    </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-2">{{ prisoner.first_name }} {{ prisoner.last_name }}</h5>
+                                    <p class="text-muted mb-1">
+                                        <i class="bi bi-person-badge me-1"></i>ID: {{ prisoner.prisoner_id }}
+                                    </p>
+                                    <p class="text-muted mb-0">
+                                        <i class="bi bi-building me-1"></i>{{ prisoner.jail.name }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Visit Request Form -->
+                            <div class="border-top pt-3">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-calendar-plus me-2"></i>Request Visit
+                                </h6>
+                                
+                                <form method="post" class="visit-request-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="prisoner_id" value="{{ prisoner.id }}">
+                                    
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Visit Date</label>
+                                            <input type="date" name="visit_date" class="form-control" 
+                                                   required min="{% now 'Y-m-d' %}">
+                                            <div class="form-text">Select date (next 30 days)</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Time Slot</label>
+                                            <select name="time_slot" class="form-select" required>
+                                                <option value="">-- Choose Time --</option>
+                                                <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                                                <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                                                <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Visit Type Buttons -->
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <button type="submit" name="visit_type" value="REGULAR" 
+                                                    class="btn btn-success w-100">
+                                                <i class="bi bi-calendar-check me-2"></i>Regular Visit
+                                            </button>
+                                        </div>
+                                        {% if can_request_emergency %}
+                                        <div class="col-md-6">
+                                            <button type="submit" name="visit_type" value="EMERGENCY" 
+                                                    class="btn btn-warning w-100"
+                                                    onclick="return confirm('Emergency visits have a 20-day cooldown. Continue?')">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>Emergency Visit
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        {% elif search_query and selected_jail %}
+            <!-- No Results -->
+            <div class="info-state">
+                <i class="bi bi-person-x display-1"></i>
+                <h4>No Prisoners Found</h4>
+                <p>
+                    No prisoners found with name "{{ search_query }}" in selected facility.<br>
+                    Please check spelling or try different search term.
+                </p>
+                <button class="btn btn-primary" onclick="clearSearch()">
+                    <i class="bi bi-arrow-left me-2"></i>Try Again
+                </button>
+            </div>
+
         {% else %}
-            <div class="alert alert-info">
-                Please use the form on the left to search for a prisoner.
+            <!-- Initial State -->
+            <div class="info-state">
+                <i class="bi bi-search display-1"></i>
+                <h4>Ready to Search</h4>
+                <p>
+                    Use search form above to find prisoners.<br>
+                    Select facility and enter prisoner's name to start.
+                </p>
             </div>
         {% endif %}
     </div>
+
+    <!-- Emergency Visit Info -->
+    {% if can_request_emergency %}
+    <div class="emergency-info">
+        <h6><i class="bi bi-info-circle me-2"></i>Emergency Visit Information</h6>
+        <ul class="mb-0">
+            <li>Available for family members only</li>
+            <li>20-day cooldown between requests</li>
+            <li>Subject to special approval</li>
+            <li>Standard visiting rules apply</li>
+        </ul>
+    </div>
+    {% endif %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('search-form');
+    const searchBtn = document.getElementById('search-btn');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    
+    // Search form submission
+    searchForm.addEventListener('submit', function() {
+        loadingSpinner.style.display = 'block';
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Searching...';
+    });
+    
+    // Visit form validation
+    const visitForms = document.querySelectorAll('.visit-request-form');
+    visitForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const dateInput = form.querySelector('input[name="visit_date"]');
+            const timeSelect = form.querySelector('select[name="time_slot"]');
+            
+            if (!dateInput.value || !timeSelect.value) {
+                e.preventDefault();
+                alert('Please select both date and time slot.');
+                return false;
+            }
+            
+            // Loading state
+            const submitBtn = e.submitter;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+            }
+        });
+    });
+    
+    // Focus management
+    const jailSelect = document.getElementById('jail');
+    const prisonerInput = document.getElementById('prisoner_name');
+    
+    if (jailSelect.value) {
+        prisonerInput.focus();
+    }
+});
+
+function clearSearch() {
+    document.getElementById('prisoner_name').value = '';
+    document.getElementById('jail').value = '';
+    document.getElementById('prisoner_name').focus();
+}
+
+// Prevent double submission
+let isSubmitting = false;
+document.addEventListener('submit', function(e) {
+    if (isSubmitting) {
+        e.preventDefault();
+        return false;
+    }
+    isSubmitting = true;
+    setTimeout(() => isSubmitting = false, 3000);
+});
+</script>
 {% endblock %}
