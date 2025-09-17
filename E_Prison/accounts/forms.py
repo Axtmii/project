@@ -17,7 +17,7 @@ class UserRegisterForm(UserCreationForm):
     )
     
     aadhar_number = forms.CharField(
-        max_length=12,  # Model max_length=12
+        max_length=14,  # FIXED: Allow for formatted input with spaces (12 digits + 2 spaces)
         required=True,  # Make required for new registrations
         help_text="Enter your 12-digit Aadhar card number (only accepted ID proof)",
         label="Aadhar Card Number"
@@ -71,7 +71,8 @@ class UserRegisterForm(UserCreationForm):
                 field.widget.attrs.update({
                     'class': 'form-control',
                     'placeholder': 'Enter 12-digit Aadhar number',
-                    'pattern': r'[0-9\s\-]{12,14}',
+                    'maxlength': '14',  # FIXED: Allow formatted input
+                    'pattern': r'[0-9\s]{12,14}',  # FIXED: Simplified pattern
                     'title': 'Enter valid 12-digit Aadhar number'
                 })
             elif field_name == 'phone_number':
@@ -103,18 +104,22 @@ class UserRegisterForm(UserCreationForm):
         return image
 
     def clean_aadhar_number(self):
-        """Validate Aadhar number using your model's validation method"""
+        """FIXED: Validate Aadhar number with proper space handling"""
         aadhar_number = self.cleaned_data.get('aadhar_number')
         
         if not aadhar_number:
             raise ValidationError("Aadhar number is required.")
         
-        # Use your model's validation method
-        if not User.is_valid_aadhar(aadhar_number):
-            raise ValidationError("Invalid Aadhar number. Must be 12 digits and cannot start with 0 or 1.")
+        # FIXED: Remove spaces for validation
+        aadhar_clean = re.sub(r'\s', '', aadhar_number)
         
-        # Remove spaces and hyphens for storage
-        aadhar_clean = re.sub(r'[\s\-]', '', aadhar_number)
+        # Validate format (exactly 12 digits)
+        if not re.match(r'^\d{12}$', aadhar_clean):
+            raise ValidationError("Aadhar number must be exactly 12 digits.")
+        
+        # Check if starts with 0 or 1 (invalid Aadhar numbers)
+        if aadhar_clean[0] in ['0', '1']:
+            raise ValidationError("Invalid Aadhar number. Aadhar numbers cannot start with 0 or 1.")
         
         # Check for duplicate Aadhar numbers
         existing_user = User.objects.filter(aadhar_number=aadhar_clean)
@@ -124,7 +129,7 @@ class UserRegisterForm(UserCreationForm):
         if existing_user.exists():
             raise ValidationError("This Aadhar number is already registered.")
         
-        return aadhar_clean
+        return aadhar_clean  # Return clean digits only for storage
 
     def clean_phone_number(self):
         """Validate Indian phone number format"""
@@ -238,12 +243,13 @@ class VisitorRegistrationForm(UserCreationForm):
     )
     
     aadhar_number = forms.CharField(
-        max_length=12,
+        max_length=14,  # FIXED: Allow for formatted input with spaces
         required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Enter 12-digit Aadhar number',
-            'pattern': r'[0-9\s\-]{12,14}',
+            'maxlength': '14',  # FIXED: HTML maxlength
+            'pattern': r'[0-9\s]{12,14}',  # FIXED: Simplified pattern
             'title': 'Enter valid 12-digit Aadhar number'
         }),
         help_text="Enter your 12-digit Aadhar card number (only accepted ID proof)"
@@ -281,18 +287,22 @@ class VisitorRegistrationForm(UserCreationForm):
         )
 
     def clean_aadhar_number(self):
-        """Use your model's Aadhar validation"""
+        """FIXED: Use proper Aadhar validation with space handling"""
         aadhar_number = self.cleaned_data.get('aadhar_number')
         
         if not aadhar_number:
             raise ValidationError("Aadhar number is required.")
         
-        # Use your model's validation method
-        if not User.is_valid_aadhar(aadhar_number):
-            raise ValidationError("Invalid Aadhar number. Must be 12 digits and cannot start with 0 or 1.")
+        # FIXED: Remove spaces for validation
+        aadhar_clean = re.sub(r'\s', '', aadhar_number)
         
-        # Clean format for storage
-        aadhar_clean = re.sub(r'[\s\-]', '', aadhar_number)
+        # Validate format (exactly 12 digits)
+        if not re.match(r'^\d{12}$', aadhar_clean):
+            raise ValidationError("Aadhar number must be exactly 12 digits.")
+        
+        # Check if starts with 0 or 1 (invalid Aadhar numbers)
+        if aadhar_clean[0] in ['0', '1']:
+            raise ValidationError("Invalid Aadhar number. Aadhar numbers cannot start with 0 or 1.")
         
         # Check for duplicates
         existing_user = User.objects.filter(aadhar_number=aadhar_clean)
@@ -302,7 +312,7 @@ class VisitorRegistrationForm(UserCreationForm):
         if existing_user.exists():
             raise ValidationError("This Aadhar number is already registered.")
         
-        return aadhar_clean
+        return aadhar_clean  # Return clean digits only for storage
 
     def clean_phone_number(self):
         """Validate phone number"""
