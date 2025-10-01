@@ -2,234 +2,507 @@
 {% load static %}
 
 {% block title %}Request a Visit{% endblock %}
-{% block page_title %}Request Prison Visit{% endblock %}
+{% block page_title %}REQUEST PRISON VISIT{% endblock %}
 
 {% block extra_head %}
 <style>
-/* Dark Prison Theme - Visit Request */
-:root {
-    --bg-dark: #1a1a1a;
-    --bg-card: #2d2d2d;
-    --bg-input: #404040;
-    --bg-accent: #333;
-    --border: #666;
-    --text-white: #ffffff;
-    --text-muted: #cccccc;
-    --text-gray: #aaaaaa;
-    --primary: #0066cc;
-    --success: #28a745;
-    --warning: #ffc107;
-    --danger: #dc3545;
-}
-
-body {
-    background: var(--bg-dark) !important;
-    color: var(--text-white) !important;
-}
-
+/* Search Container */
 .search-container {
-    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-accent) 100%);
-    border: 2px solid var(--border);
-    border-radius: 12px;
+    background: var(--secondary-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--border-radius);
     padding: 2rem;
     margin-bottom: 2rem;
-    border-top: 4px solid var(--primary);
+    box-shadow: var(--shadow-medium);
 }
 
-.search-container h3 {
-    color: var(--text-white);
+.search-header {
+    margin-bottom: 2rem;
+}
+
+.search-header h3 {
+    color: var(--text-primary);
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.search-container p {
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
+.search-header p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
 }
 
+/* Form Elements */
 .form-label {
-    color: var(--text-white) !important;
+    color: var(--text-primary) !important;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
-.form-control, .form-select {
-    background: var(--bg-input) !important;
-    border: 2px solid var(--border) !important;
-    color: var(--text-white) !important;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
+.form-label i {
+    color: var(--security-blue);
 }
 
-.form-control:focus, .form-select:focus {
-    background: var(--bg-input) !important;
-    border-color: var(--primary) !important;
-    color: var(--text-white) !important;
-    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25) !important;
+/* Card Grid Layout */
+.prisoners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
-.form-control::placeholder {
-    color: var(--text-muted) !important;
-}
-
-.form-select option {
-    background: var(--bg-input);
-    color: var(--text-white);
-}
-
-.btn-primary {
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
-    color: white !important;
-    font-weight: 600;
-}
-
-.btn-primary:hover {
-    background: #0056b3 !important;
-    transform: translateY(-1px);
-}
-
-.btn-success {
-    background: var(--success) !important;
-    border-color: var(--success) !important;
-    color: white !important;
-    font-weight: 500;
-}
-
-.btn-warning {
-    background: var(--warning) !important;
-    border-color: var(--warning) !important;
-    color: #000 !important;
-    font-weight: 500;
-}
-
-.btn-light {
-    background: var(--text-white) !important;
-    border-color: var(--text-white) !important;
-    color: var(--bg-dark) !important;
-    font-weight: 600;
-}
-
-.btn-light:hover {
-    background: var(--text-muted) !important;
-    transform: translateY(-1px);
-}
-
+/* ID Card Style */
 .prisoner-card {
-    background: var(--bg-card) !important;
-    border: 2px solid var(--border) !important;
+    background: linear-gradient(135deg, #1a1d29 0%, #252936 100%);
+    border: 3px solid var(--border-dark);
     border-radius: 12px;
+    padding: 0;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+}
+
+.prisoner-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--security-blue), var(--security-green));
 }
 
 .prisoner-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    transform: translateY(-8px);
+    border-color: var(--security-blue);
+    box-shadow: 0 12px 32px rgba(0, 123, 255, 0.4);
 }
 
-.prisoner-card .card-body {
-    background: transparent;
-    color: var(--text-white);
+/* ID Card Header */
+.id-card-header {
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.15), rgba(40, 167, 69, 0.15));
+    padding: 1.25rem;
+    border-bottom: 2px solid var(--border-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.prisoner-card .card-title {
-    color: var(--text-white);
-    font-weight: 600;
+.id-card-header i {
+    color: var(--security-blue);
+    font-size: 1.1rem;
+}
+
+.id-card-header h6 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ID Card Body - Main Info Section */
+.id-card-body {
+    padding: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    background: var(--secondary-dark);
+}
+
+/* Photo Section */
+.id-photo-section {
+    flex-shrink: 0;
+}
+
+.id-photo-frame {
+    position: relative;
+    padding: 4px;
+    background: linear-gradient(135deg, var(--security-blue), var(--security-green));
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .prisoner-photo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--border);
-}
-
-.text-muted {
-    color: var(--text-muted) !important;
-}
-
-.text-primary {
-    color: var(--primary) !important;
-}
-
-.border-top {
-    border-color: var(--border) !important;
-}
-
-.emergency-info {
-    background: rgba(255, 193, 7, 0.1) !important;
-    border: 2px solid var(--warning);
-    border-left: 4px solid var(--warning);
+    width: 120px;
+    height: 120px;
     border-radius: 8px;
-    padding: 1rem;
-    margin-top: 2rem;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border: 3px solid var(--secondary-dark);
 }
 
-.emergency-info h6 {
-    color: var(--warning);
+.prisoner-photo-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--security-blue), var(--security-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    border: 3px solid var(--secondary-dark);
+}
+
+/* ID Details Section */
+.id-details-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.prisoner-name-block {
+    border-bottom: 2px solid var(--border-dark);
+    padding-bottom: 1rem;
+}
+
+.prisoner-name {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.prisoner-id-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 123, 255, 0.15);
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.prisoner-id-badge i {
+    color: var(--security-blue);
+    font-size: 0.9rem;
+}
+
+.prisoner-id-badge span {
+    color: var(--text-primary);
+    font-family: 'Roboto Mono', monospace;
     font-weight: 600;
+    font-size: 0.85rem;
 }
 
-.emergency-info ul, .emergency-info li {
+/* Info Grid */
+.id-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.id-info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--accent-dark);
+    border-radius: 8px;
+    border: 1px solid var(--border-dark);
+}
+
+.id-info-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(0, 123, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.id-info-icon i {
+    color: var(--security-blue);
+    font-size: 0.95rem;
+}
+
+.id-info-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.id-info-label {
     color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
 }
 
-.form-text {
-    color: var(--text-gray) !important;
+.id-info-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: 'Roboto Mono', monospace;
 }
 
+/* Visit Request Section */
+.visit-request-section {
+    padding: 1.5rem 2rem 2rem 2rem;
+    background: var(--accent-dark);
+    border-top: 2px solid var(--border-dark);
+}
+
+.visit-request-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.visit-request-header i {
+    color: var(--security-green);
+    font-size: 1.1rem;
+}
+
+.visit-request-header h6 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.visit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.form-group label i {
+    color: var(--security-blue);
+    font-size: 0.8rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    background: var(--secondary-dark);
+    border: 2px solid var(--border-dark);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--security-blue);
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+    outline: none;
+    background: var(--secondary-dark);
+}
+
+.visit-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.visit-actions .btn {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    border: 2px solid transparent;
+}
+
+.visit-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.visit-actions .btn i {
+    font-size: 1rem;
+}
+
+.visit-actions .btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+
+.visit-actions .btn-success:hover {
+    background: linear-gradient(135deg, #218838, #1aa179);
+    border-color: #1e7e34;
+}
+
+.visit-actions .btn-warning {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    border-color: #ffc107;
+    color: #000;
+}
+
+.visit-actions .btn-warning:hover {
+    background: linear-gradient(135deg, #e0a800, #e68900);
+    border-color: #d39e00;
+}
+
+/* Results Header */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.results-header h4 {
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.results-count {
+    color: var(--text-primary);
+    background: var(--accent-dark);
+    padding: 0.625rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    border: 2px solid var(--border-dark);
+    font-weight: 700;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Info States */
+.info-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--secondary-dark);
+    border: 2px solid var(--border-dark);
+    border-radius: var(--border-radius);
+    margin: 2rem 0;
+    box-shadow: var(--shadow-medium);
+}
+
+.info-state i {
+    color: var(--text-muted);
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.6;
+}
+
+.info-state h4 {
+    color: var(--text-primary);
+    margin: 1rem 0;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.info-state p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+/* Loading */
 .loading-spinner {
     display: none;
     text-align: center;
     padding: 2rem;
     color: var(--text-muted);
-}
-
-.results-container {
-    min-height: 300px;
-}
-
-/* Info boxes */
-.info-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: var(--bg-card);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    margin: 2rem 0;
-}
-
-.info-state i {
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-}
-
-.info-state h4 {
-    color: var(--text-white);
-    margin: 1rem 0;
-}
-
-.info-state p {
-    color: var(--text-muted);
+    background: var(--secondary-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
 }
 
-/* Responsive */
+/* Mobile Responsive */
 @media (max-width: 768px) {
+    .prisoners-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .id-card-body {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .id-photo-section {
+        margin-bottom: 1rem;
+    }
+    
+    .prisoner-name-block {
+        text-align: center;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .visit-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
     .search-container {
         padding: 1.5rem;
     }
     
-    .search-container h3 {
-        font-size: 1.3rem;
+    .id-card-body,
+    .visit-request-section {
+        padding: 1.25rem;
     }
     
-    .prisoner-photo {
-        width: 60px;
-        height: 60px;
+    .prisoner-name {
+        font-size: 1.25rem;
     }
 }
 </style>
@@ -239,22 +512,21 @@ body {
 <div class="container-fluid">
     <!-- Search Section -->
     <div class="search-container">
-        <div class="row align-items-center mb-4">
-            <div class="col-md-8">
-                <h3><i class="bi bi-search me-2"></i>Find Prisoner</h3>
-                <p>Search for the prisoner you want to visit by selecting facility and entering their name.</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <i class="bi bi-person-lines-fill display-1 text-primary"></i>
-            </div>
+        <div class="search-header">
+            <h3>
+                <i class="bi bi-search"></i>
+                FIND PRISONER
+            </h3>
+            <p>Search for the prisoner you want to visit by selecting facility and entering their name.</p>
         </div>
         
         <form id="search-form" method="get">
             {% csrf_token %}
             <div class="row g-3">
-                <div class="col-md-5">
+                <div class="col-lg-5">
                     <label for="jail" class="form-label">
-                        <i class="bi bi-building me-2"></i>Select Facility
+                        <i class="bi bi-building"></i>
+                        SELECT FACILITY
                     </label>
                     <select name="jail" id="jail" class="form-select" required>
                         <option value="">-- Choose Facility --</option>
@@ -265,160 +537,177 @@ body {
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <label for="prisoner_name" class="form-label">
-                        <i class="bi bi-person me-2"></i>Prisoner Name
+                        <i class="bi bi-person"></i>
+                        PRISONER NAME
                     </label>
                     <input type="text" name="prisoner_name" id="prisoner_name" 
-                           class="form-control" 
-                           value="{{ search_query|default:'' }}" 
+                           class="form-control" value="{{ search_query|default:'' }}" 
                            placeholder="Enter first name" required>
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-light w-100" id="search-btn">
-                        <i class="bi bi-search me-2"></i>Search
+                <div class="col-lg-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100" id="search-btn">
+                        <i class="bi bi-search me-2"></i>SEARCH
                     </button>
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- Loading Spinner -->
+    <!-- Loading -->
     <div class="loading-spinner" id="loading-spinner">
-        <div class="spinner-border text-primary mb-3" role="status"></div>
         <p>Searching for prisoners...</p>
     </div>
 
-    <!-- Results Section -->
+    <!-- Results -->
     <div class="results-container">
         {% if search_query and selected_jail %}
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4><i class="bi bi-person-check me-2"></i>Search Results</h4>
-                <div class="text-muted">
-                    Found {{ prisoners|length }} prisoner{{ prisoners|length|pluralize }} matching "{{ search_query }}"
+            <div class="results-header">
+                <h4>
+                    <i class="bi bi-person-check-fill"></i>
+                    SEARCH RESULTS
+                </h4>
+                <div class="results-count">
+                    FOUND: {{ prisoners|length }} PRISONER{{ prisoners|length|pluralize }}
                 </div>
             </div>
         {% endif %}
 
         {% if prisoners %}
-            <div class="row">
+            <div class="prisoners-grid">
                 {% for prisoner in prisoners %}
-                <div class="col-lg-6 mb-4">
-                    <div class="card prisoner-card h-100">
-                        <div class="card-body">
-                            <!-- Prisoner Info -->
-                            <div class="d-flex align-items-start mb-4">
+                <div class="prisoner-card">
+                    <!-- ID Card Header -->
+                    <div class="id-card-header">
+                        <i class="bi bi-person-vcard-fill"></i>
+                        <h6>PRISONER IDENTIFICATION CARD</h6>
+                    </div>
+                    
+                    <!-- ID Card Body -->
+                    <div class="id-card-body">
+                        <!-- Photo Section -->
+                        <div class="id-photo-section">
+                            <div class="id-photo-frame">
                                 {% if prisoner.photo %}
-                                    <img src="{{ prisoner.photo.url }}" class="prisoner-photo me-3" alt="Photo">
+                                    <img src="{{ prisoner.photo.url }}" class="prisoner-photo" alt="{{ prisoner.first_name }}">
                                 {% else %}
-                                    <div class="prisoner-photo me-3 bg-secondary d-flex align-items-center justify-content-center text-white fs-4">
+                                    <div class="prisoner-photo-placeholder">
                                         {{ prisoner.first_name|first }}{{ prisoner.last_name|first }}
                                     </div>
                                 {% endif %}
-                                <div class="flex-grow-1">
-                                    <h5 class="card-title mb-2">{{ prisoner.first_name }} {{ prisoner.last_name }}</h5>
-                                    <p class="text-muted mb-1">
-                                        <i class="bi bi-person-badge me-1"></i>ID: {{ prisoner.prisoner_id }}
-                                    </p>
-                                    <p class="text-muted mb-0">
-                                        <i class="bi bi-building me-1"></i>{{ prisoner.jail.name }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Visit Request Form -->
-                            <div class="border-top pt-3">
-                                <h6 class="text-primary mb-3">
-                                    <i class="bi bi-calendar-plus me-2"></i>Request Visit
-                                </h6>
-                                
-                                <form method="post" class="visit-request-form">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="prisoner_id" value="{{ prisoner.id }}">
-                                    
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Visit Date</label>
-                                            <input type="date" name="visit_date" class="form-control" 
-                                                   required min="{% now 'Y-m-d' %}">
-                                            <div class="form-text">Select date (next 30 days)</div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Time Slot</label>
-                                            <select name="time_slot" class="form-select" required>
-                                                <option value="">-- Choose Time --</option>
-                                                <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                                                <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
-                                                <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Visit Type Buttons -->
-                                    <div class="row g-2">
-                                        <div class="col-md-6">
-                                            <button type="submit" name="visit_type" value="REGULAR" 
-                                                    class="btn btn-success w-100">
-                                                <i class="bi bi-calendar-check me-2"></i>Regular Visit
-                                            </button>
-                                        </div>
-                                        {% if can_request_emergency %}
-                                        <div class="col-md-6">
-                                            <button type="submit" name="visit_type" value="EMERGENCY" 
-                                                    class="btn btn-warning w-100"
-                                                    onclick="return confirm('Emergency visits have a 20-day cooldown. Continue?')">
-                                                <i class="bi bi-exclamation-triangle me-2"></i>Emergency Visit
-                                            </button>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                </form>
                             </div>
                         </div>
+                        
+                        <!-- Details Section -->
+                        <div class="id-details-section">
+                            <div class="prisoner-name-block">
+                                <h5 class="prisoner-name">{{ prisoner.first_name }} {{ prisoner.last_name }}</h5>
+                                <div class="prisoner-id-badge">
+                                    <i class="bi bi-hash"></i>
+                                    <span>{{ prisoner.prisoner_id }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="id-info-grid">
+                                <div class="id-info-item">
+                                    <div class="id-info-icon">
+                                        <i class="bi bi-calendar3"></i>
+                                    </div>
+                                    <div class="id-info-content">
+                                        <div class="id-info-label">Date of Birth</div>
+                                        <div class="id-info-value">{{ prisoner.date_of_birth|date:"d M Y" }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="id-info-item">
+                                    <div class="id-info-icon">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <div class="id-info-content">
+                                        <div class="id-info-label">Facility Location</div>
+                                        <div class="id-info-value">{{ prisoner.jail.name }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visit Request Section -->
+                    <div class="visit-request-section">
+                        <div class="visit-request-header">
+                            <i class="bi bi-calendar-check-fill"></i>
+                            <h6>REQUEST VISIT APPOINTMENT</h6>
+                        </div>
+                        
+                        <form method="post" class="visit-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="prisoner_id" value="{{ prisoner.id }}">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="visit_date_{{ prisoner.id }}">
+                                        <i class="bi bi-calendar-event"></i>
+                                        Visit Date
+                                    </label>
+                                    <input type="date" name="visit_date" id="visit_date_{{ prisoner.id }}" 
+                                           class="form-control" required min="{% now 'Y-m-d' %}">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="time_slot_{{ prisoner.id }}">
+                                        <i class="bi bi-clock"></i>
+                                        Time Slot
+                                    </label>
+                                    <select name="time_slot" id="time_slot_{{ prisoner.id }}" 
+                                            class="form-select" required>
+                                        <option value="">-- Select Time --</option>
+                                        <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                                        <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                                        <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="visit-actions">
+                                <button type="submit" name="visit_type" value="REGULAR" class="btn btn-success">
+                                    <i class="bi bi-calendar-check"></i>
+                                    REGULAR VISIT
+                                </button>
+                                
+                                {% if can_request_emergency %}
+                                <button type="submit" name="visit_type" value="EMERGENCY" class="btn btn-warning"
+                                        onclick="return confirm('Emergency visits have a 20-day cooldown. Continue?')">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    EMERGENCY
+                                </button>
+                                {% endif %}
+                            </div>
+                        </form>
                     </div>
                 </div>
                 {% endfor %}
             </div>
 
         {% elif search_query and selected_jail %}
-            <!-- No Results -->
             <div class="info-state">
-                <i class="bi bi-person-x display-1"></i>
-                <h4>No Prisoners Found</h4>
-                <p>
-                    No prisoners found with name "{{ search_query }}" in selected facility.<br>
-                    Please check spelling or try different search term.
-                </p>
+                <i class="bi bi-person-x-fill"></i>
+                <h4>NO PRISONERS FOUND</h4>
+                <p>No prisoners found with name "{{ search_query }}" in selected facility.</p>
                 <button class="btn btn-primary" onclick="clearSearch()">
-                    <i class="bi bi-arrow-left me-2"></i>Try Again
+                    <i class="bi bi-arrow-left me-2"></i>TRY AGAIN
                 </button>
             </div>
 
         {% else %}
-            <!-- Initial State -->
             <div class="info-state">
-                <i class="bi bi-search display-1"></i>
-                <h4>Ready to Search</h4>
-                <p>
-                    Use search form above to find prisoners.<br>
-                    Select facility and enter prisoner's name to start.
-                </p>
+                <i class="bi bi-search"></i>
+                <h4>READY TO SEARCH</h4>
+                <p>Use the search form above to find prisoners and request visits.</p>
             </div>
         {% endif %}
     </div>
-
-    <!-- Emergency Visit Info -->
-    {% if can_request_emergency %}
-    <div class="emergency-info">
-        <h6><i class="bi bi-info-circle me-2"></i>Emergency Visit Information</h6>
-        <ul class="mb-0">
-            <li>Available for family members only</li>
-            <li>20-day cooldown between requests</li>
-            <li>Subject to special approval</li>
-            <li>Standard visiting rules apply</li>
-        </ul>
-    </div>
-    {% endif %}
 </div>
 
 <script>
@@ -426,17 +715,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('search-form');
     const searchBtn = document.getElementById('search-btn');
     const loadingSpinner = document.getElementById('loading-spinner');
+    const resultsContainer = document.querySelector('.results-container');
     
     // Search form submission
     searchForm.addEventListener('submit', function() {
         loadingSpinner.style.display = 'block';
+        resultsContainer.style.display = 'none';
         searchBtn.disabled = true;
-        searchBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Searching...';
+        searchBtn.innerHTML = '<i class="bi bi-search me-2"></i>Searching...';
     });
     
     // Visit form validation
-    const visitForms = document.querySelectorAll('.visit-request-form');
-    visitForms.forEach(form => {
+    document.querySelectorAll('.visit-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             const dateInput = form.querySelector('input[name="visit_date"]');
             const timeSelect = form.querySelector('select[name="time_slot"]');
@@ -447,22 +737,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
             
-            // Loading state
             const submitBtn = e.submitter;
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Submitting...';
             }
         });
     });
     
-    // Focus management
-    const jailSelect = document.getElementById('jail');
-    const prisonerInput = document.getElementById('prisoner_name');
-    
-    if (jailSelect.value) {
-        prisonerInput.focus();
-    }
+    // Set date limits
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        const today = new Date().toISOString().split('T')[0];
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 30);
+        input.setAttribute('min', today);
+        input.setAttribute('max', maxDate.toISOString().split('T')[0]);
+    });
 });
 
 function clearSearch() {
@@ -470,16 +760,5 @@ function clearSearch() {
     document.getElementById('jail').value = '';
     document.getElementById('prisoner_name').focus();
 }
-
-// Prevent double submission
-let isSubmitting = false;
-document.addEventListener('submit', function(e) {
-    if (isSubmitting) {
-        e.preventDefault();
-        return false;
-    }
-    isSubmitting = true;
-    setTimeout(() => isSubmitting = false, 3000);
-});
 </script>
 {% endblock %}
