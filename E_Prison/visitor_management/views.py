@@ -67,9 +67,16 @@ def request_visit(request):
             prisoners = Prisoner.objects.none()
             print(f"Search error: {e}")
 
-    # Emergency visit eligibility check
+    # 🔧 FIXED Emergency visit eligibility check
     can_request_emergency = False
-    if request.user.role == 'family':
+    
+    # Check if user has properly set up prisoner relationship
+    if (hasattr(request.user, 'related_prisoner') and 
+        request.user.related_prisoner and 
+        hasattr(request.user, 'relationship_to_prisoner') and 
+        request.user.relationship_to_prisoner):
+        
+        # Check cooldown period
         last_emergency = Visit.objects.filter(
             visitor=request.user, 
             visit_type='EMERGENCY'
@@ -77,6 +84,11 @@ def request_visit(request):
         
         if not last_emergency or (timezone.now().date() - last_emergency.visit_date > timedelta(days=20)):
             can_request_emergency = True
+        
+        print(f"🔍 DEBUG: User {request.user.username} emergency eligibility:")
+        print(f"  - related_prisoner: {getattr(request.user, 'related_prisoner', 'None')}")
+        print(f"  - relationship_to_prisoner: {getattr(request.user, 'relationship_to_prisoner', 'None')}")
+        print(f"  - can_request_emergency: {can_request_emergency}")
     
     # Handle form submission
     if request.method == 'POST':
@@ -85,13 +97,36 @@ def request_visit(request):
         time_slot = request.POST.get('time_slot')
         visit_type = request.POST.get('visit_type', 'REGULAR')
         
+        # 🔍 DEBUG: Print received form data
+        print(f"🔍 FORM SUBMISSION DEBUG:")
+        print(f"  - prisoner_id: {prisoner_id}")
+        print(f"  - visit_date: {visit_date}")
+        print(f"  - time_slot: {time_slot}")
+        print(f"  - visit_type: '{visit_type}'")
+        
         try:
             prisoner = get_object_or_404(Prisoner, id=prisoner_id)
             
-            # Validation
-            if visit_type == 'EMERGENCY' and not can_request_emergency:
-                messages.error(request, "You are not eligible for an emergency visit at this time.")
-                return redirect('request_visit')
+            # 🔧 ENHANCED Validation - check if this specific prisoner relationship
+            if visit_type == 'EMERGENCY':
+                if not (hasattr(request.user, 'related_prisoner') and 
+                       request.user.related_prisoner and 
+                       request.user.related_prisoner.id == int(prisoner_id) and
+                       hasattr(request.user, 'relationship_to_prisoner') and 
+                       request.user.relationship_to_prisoner):
+                    messages.error(request, "Emergency visits are only available for your related family member.")
+                    return redirect('request_visit')
+                
+                # Check cooldown period
+                last_emergency = Visit.objects.filter(
+                    visitor=request.user, 
+                    visit_type='EMERGENCY'
+                ).order_by('-visit_date').first()
+                
+                if last_emergency and (timezone.now().date() - last_emergency.visit_date <= timedelta(days=20)):
+                    days_left = 20 - (timezone.now().date() - last_emergency.visit_date).days
+                    messages.error(request, f"You must wait {days_left} more days before requesting another emergency visit.")
+                    return redirect('request_visit')
             
             # Check for duplicate requests
             existing_visit = Visit.objects.filter(
@@ -106,15 +141,22 @@ def request_visit(request):
                 messages.warning(request, f"You already have a {existing_visit.status.lower()} visit request for this date and time.")
                 return redirect('my_visits')
             
-            # Create visit request
+            # 🔧 CRITICAL: Create visit request with proper visit_type
             visit = Visit.objects.create(
                 visitor=request.user,
                 prisoner=prisoner,
                 visit_date=visit_date,
                 visit_time_slot=time_slot,
                 status='PENDING',
-                visit_type=visit_type
+                visit_type=visit_type  # 🚨 This should save correctly now
             )
+            
+            # 🔍 DEBUG: Verify what was actually saved
+            print(f"✅ VISIT CREATED:")
+            print(f"  - Visit ID: {visit.id}")
+            print(f"  - visit_type saved as: '{visit.visit_type}'")
+            print(f"  - visitor: {visit.visitor.username}")
+            print(f"  - prisoner: {visit.prisoner.first_name} {visit.prisoner.last_name}")
             
             messages.success(request, f"Your {visit_type.lower()} visit request has been submitted successfully! Visit ID: {visit.id}")
             return redirect('my_visits')

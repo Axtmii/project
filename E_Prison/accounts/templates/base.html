@@ -237,6 +237,32 @@
             font-family: 'Roboto Mono', monospace;
         }
 
+        /* Enhanced User Badge with Family Info */
+        .user-info-badge {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(0, 123, 255, 0.1);
+            border: 1px solid var(--security-blue);
+            border-radius: var(--border-radius);
+            font-size: 0.7rem;
+            color: var(--security-blue);
+        }
+
+        .family-indicator {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--security-green);
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .prison-image {
             width: 100%;
             height: 120px;
@@ -335,6 +361,19 @@
             box-shadow: 0 0 4px var(--security-green);
         }
 
+        /* Family Navigation Indicators */
+        .nav-link[href*="family"] i::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--warning-yellow);
+            border-radius: 50%;
+            top: -2px;
+            right: -2px;
+            box-shadow: 0 0 4px var(--warning-yellow);
+        }
+
         /* Main Content Area */
         #content {
             flex: 1;
@@ -385,6 +424,7 @@
             animation: pulse 2s infinite;
         }
 
+        /* Enhanced User Dropdown */
         .user-dropdown .dropdown-toggle {
             background: var(--accent-dark);
             border: 1px solid var(--border-dark);
@@ -393,6 +433,9 @@
             color: var(--text-primary);
             font-weight: 500;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .user-dropdown .dropdown-toggle:hover {
@@ -401,21 +444,48 @@
             box-shadow: var(--shadow-light);
         }
 
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .dropdown-menu {
             background: var(--secondary-dark);
             border: 1px solid var(--border-dark);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-heavy);
             margin-top: 8px;
+            min-width: 220px;
         }
 
         .dropdown-item {
             color: var(--text-secondary);
-            padding: 10px 16px;
+            padding: 12px 16px;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .dropdown-item:hover {
+            background: rgba(0, 123, 255, 0.1);
+            color: var(--security-blue);
+        }
+
+        .dropdown-item.text-danger:hover {
             background: rgba(220, 53, 69, 0.1);
             color: var(--security-red);
         }
@@ -580,6 +650,10 @@
             body.emergency-alert-active .floating-toggle {
                 top: 80px;
             }
+
+            .user-info-text {
+                display: none;
+            }
         }
 
         /* Enhanced Scrollbar */
@@ -704,6 +778,8 @@
             color: var(--text-secondary);
             font-weight: 500;
         }
+
+        {% block extra_head %}{% endblock %}
     </style>
 </head>
 <body {% if active_alert %}class="emergency-alert-active"{% endif %}>
@@ -760,11 +836,35 @@
                 <h3><i class="bi bi-shield-lock-fill"></i> E-PRISON ACCESS</h3>
                 <div class="prison-image"></div>
                 <span class="facility-badge">{{ user.get_role_display }}</span>
+                
+                <!-- Enhanced User Info with Family Status and Prisoner Relationship -->
+                {% if user.role == 'family' %}
+                <div class="user-info-badge">
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span class="family-indicator"></span>
+                        FAMILY MEMBER
+                    </div>
+                    {% if user.can_authorize_emergency_visits %}
+                        <div style="font-size: 0.6rem; margin-top: 2px; color: var(--warning-yellow);">
+                            EMERGENCY AUTHORIZER
+                        </div>
+                    {% elif user.primary_family_member %}
+                        <div style="font-size: 0.6rem; margin-top: 2px;">
+                            LINKED TO {{ user.primary_family_member.full_name|truncatechars:15 }}
+                        </div>
+                    {% endif %}
+                    {% if user.related_prisoner %}
+                        <div style="font-size: 0.6rem; margin-top: 2px; color: var(--text-muted);">
+                            VISITING: {{ user.related_prisoner.full_name|truncatechars:15 }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
 
             <div class="sidebar-nav">
                 <div class="nav-item">
-                    <a href="{% url 'dashboard' %}" class="nav-link active">
+                    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                         <i class="bi bi-speedometer2"></i>
                         DASHBOARD
                     </a>
@@ -772,31 +872,31 @@
 
                 {% if user.role == 'admin' %}
                     <div class="nav-item">
-                        <a href="{% url 'review_visits' %}" class="nav-link">
+                        <a href="{% url 'review_visits' %}" class="nav-link {% if request.resolver_match.url_name == 'review_visits' %}active{% endif %}">
                             <i class="bi bi-clipboard-check-fill"></i>
                             REVIEW REQUESTS
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'prisoner_list' %}" class="nav-link">
+                        <a href="{% url 'prisoner_list' %}" class="nav-link {% if request.resolver_match.url_name == 'prisoner_list' %}active{% endif %}">
                             <i class="bi bi-person-fill-lock"></i>
                             PRISONER RECORDS
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'jail_list' %}" class="nav-link">
+                        <a href="{% url 'jail_list' %}" class="nav-link {% if request.resolver_match.url_name == 'jail_list' %}active{% endif %}">
                             <i class="bi bi-building-gear"></i>
                             MANAGE FACILITIES
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'manage_security_staff' %}" class="nav-link">
+                        <a href="{% url 'manage_security_staff' %}" class="nav-link {% if request.resolver_match.url_name == 'manage_security_staff' %}active{% endif %}">
                             <i class="bi bi-people-fill"></i>
                             SECURITY STAFF
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'blacklist_list' %}" class="nav-link">
+                        <a href="{% url 'blacklist_list' %}" class="nav-link {% if request.resolver_match.url_name == 'blacklist_list' %}active{% endif %}">
                             <i class="bi bi-person-x-fill"></i>
                             BLACKLIST MGMT
                         </a>
@@ -804,25 +904,44 @@
                 
                 {% elif user.role == 'security' %}
                     <div class="nav-item">
-                        <a href="{% url 'security_dashboard' %}" class="nav-link">
+                        <a href="{% url 'security_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'security_dashboard' %}active{% endif %}">
                             <i class="bi bi-shield-check"></i>
                             SECURITY CONTROL
                         </a>
                     </div>
 
                 {% else %}
+                    <!-- Visitor/Family Navigation -->
                     <div class="nav-item">
-                        <a href="{% url 'request_visit' %}" class="nav-link">
+                        <a href="{% url 'request_visit' %}" class="nav-link {% if request.resolver_match.url_name == 'request_visit' %}active{% endif %}">
                             <i class="bi bi-calendar-plus"></i>
                             REQUEST VISIT
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'my_visits' %}" class="nav-link">
+                        <a href="{% url 'my_visits' %}" class="nav-link {% if request.resolver_match.url_name == 'my_visits' %}active{% endif %}">
                             <i class="bi bi-journal-text"></i>
                             MY VISITS
                         </a>
                     </div>
+                    
+                    <!-- Profile Management -->
+                    <div class="nav-item">
+                        <a href="{% url 'user_profile' %}" class="nav-link {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+                            <i class="bi bi-person-circle"></i>
+                            MY PROFILE
+                        </a>
+                    </div>
+                    
+                    <!-- Prisoner Information for Family Members -->
+                    {% if user.role == 'family' and user.related_prisoner %}
+                    <div class="nav-item">
+                        <a href="{% url 'prisoner_detail' user.related_prisoner.pk %}" class="nav-link">
+                            <i class="bi bi-person-badge"></i>
+                            PRISONER INFO
+                        </a>
+                    </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </nav>
@@ -847,13 +966,42 @@
                         {% if user.is_authenticated %}
                             <div class="user-dropdown">
                                 <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-badge me-2"></i>
-                                    {{ user.full_name|default:user.username }}
+                                    <i class="bi bi-person-badge"></i>
+                                    <div class="user-info-text">
+                                        <div class="user-name">{{ user.full_name|default:user.username|truncatechars:20 }}</div>
+                                        <div class="user-role">
+                                            {{ user.get_role_display }}
+                                            {% if user.role == 'family' and user.can_authorize_emergency_visits %} • AUTHORIZER{% endif %}
+                                        </div>
+                                    </div>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li>
-                                        <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                                            <i class="bi bi-power me-2"></i>
+                                        <a class="dropdown-item" href="{% url 'user_profile' %}">
+                                            <i class="bi bi-person"></i>
+                                            My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'edit_profile' %}">
+                                            <i class="bi bi-pencil"></i>
+                                            Edit Profile
+                                        </a>
+                                    </li>
+                                    {% if user.role == 'family' %}
+                                    <li class="dropdown-item-text" style="font-size: 0.8rem; color: var(--text-muted);">
+                                        {% if user.related_prisoner %}
+                                            Related to: {{ user.related_prisoner.full_name }}
+                                        {% endif %}
+                                        {% if user.primary_family_member %}
+                                            <br>Authorized by: {{ user.primary_family_member.full_name }}
+                                        {% endif %}
+                                    </li>
+                                    {% endif %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{% url 'user_logout' %}">
+                                            <i class="bi bi-power"></i>
                                             SECURE LOGOUT
                                         </a>
                                     </li>
@@ -904,6 +1052,12 @@
                             <i class="bi bi-clock me-2"></i>
                             REAL-TIME MONITORING
                         </span>
+                        {% if user.role == 'family' %}
+                        <span class="security-badge" style="background: rgba(255, 193, 7, 0.1); border-color: var(--warning-yellow); color: var(--warning-yellow);">
+                            <i class="bi bi-people me-2"></i>
+                            FAMILY MEMBER ACCESS
+                        </span>
+                        {% endif %}
                     </div>
                 </div>
                 {% endblock %}
@@ -922,7 +1076,7 @@
                 setTimeout(() => {
                     pageLoader.style.display = 'none';
                 }, 500);
-            }, 1200); // Slightly longer for professional feel
+            }, 1200);
 
             // Sidebar functionality
             const sidebar = document.getElementById('sidebar');
@@ -963,17 +1117,6 @@
                 }
             });
 
-            // Enhanced active navigation highlighting
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                }
-            });
-
             // Auto-dismiss alerts after 6 seconds
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
@@ -998,7 +1141,7 @@
             setInterval(function() {
                 if (document.querySelector('.emergency-alert-top-banner')) {
                     // Alert is currently showing, check if it's still active
-                    fetch('/visitor-management/api/check-alert/', {
+                    fetch('{% url "check_alert_api" %}', {
                         method: 'GET',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
@@ -1007,14 +1150,13 @@
                     .then(response => response.json())
                     .then(data => {
                         if (!data.active) {
-                            // Alert was deactivated, reload page to remove banner
                             location.reload();
                         }
                     })
                     .catch(error => console.log('Alert check failed:', error));
                 } else {
                     // No alert showing, check for new alerts
-                    fetch('/visitor-management/api/check-alert/', {
+                    fetch('{% url "check_alert_api" %}', {
                         method: 'GET',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
@@ -1023,7 +1165,6 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.active) {
-                            // New alert activated, reload page to show banner
                             location.reload();
                         }
                     })
@@ -1042,5 +1183,7 @@
             );
         });
     </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

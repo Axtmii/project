@@ -429,7 +429,7 @@ body {
 </style>
 
 <!-- Active Emergency Alert Display (if any) -->
-{% if active_alert %}
+{% comment %} {% if active_alert %}
 <div class="emergency-alert-dashboard">
     <h4>
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -448,7 +448,7 @@ body {
         </a>
     </div>
 </div>
-{% endif %}
+{% endif %} {% endcomment %}
 
 <!-- Quick Emergency Broadcast (if no active alert) -->
 {% if not active_alert %}

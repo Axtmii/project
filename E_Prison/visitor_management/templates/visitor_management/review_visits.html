@@ -117,94 +117,63 @@ body {
     vertical-align: middle !important;
 }
 
-/* FIXED - Names Now Black with White Background */
-.visitor-name,
-.prisoner-name,
-.table tbody td div:first-child {
-    color: var(--name-black) !important;
-    background: var(--text-white) !important;
-    font-weight: 800 !important;
-    font-size: 1.1rem !important;
-    margin-bottom: 0.5rem !important;
-    padding: 0.4rem 0.8rem !important;
-    border-radius: 6px !important;
-    display: inline-block !important;
-    border: 1px solid var(--border) !important;
+/* Emergency Visit Row Highlight */
+.emergency-visit-row {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.03) 100%) !important;
+    border-left: 4px solid var(--warning) !important;
 }
 
-/* Force black names with white background on all name elements */
-td .visitor-name,
-td .prisoner-name,
-td > div:first-child {
+.emergency-visit-row:hover {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.12) 0%, rgba(255, 193, 7, 0.06) 100%) !important;
+    box-shadow: inset 4px 0 0 var(--warning) !important;
+}
+
+/* Names - Black with White Background */
+.visitor-name,
+.prisoner-name {
     color: #000000 !important;
     background: #ffffff !important;
     font-weight: 800 !important;
     font-size: 1.1rem !important;
-    display: inline-block !important;
     margin-bottom: 0.5rem !important;
     padding: 0.4rem 0.8rem !important;
     border-radius: 6px !important;
+    display: inline-block !important;
     border: 1px solid var(--border) !important;
 }
 
-/* Override any inherited styles that might affect names */
-.table tbody td > div,
-.table tbody td .visitor-name,
-.table tbody td .prisoner-name {
-    color: var(--name-black) !important;
-    background: var(--text-white) !important;
-    font-weight: 800 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    padding: 0.4rem 0.8rem !important;
-    border-radius: 6px !important;
-    display: inline-block !important;
-}
-
-/* Additional name visibility fixes */
-.table td div:first-of-type {
-    color: var(--name-black) !important;
-    background: var(--text-white) !important;
-    font-weight: 800 !important;
-    font-size: 1.1rem !important;
-    padding: 0.4rem 0.8rem !important;
-    border-radius: 6px !important;
-    display: inline-block !important;
-}
-
-/* Enhanced Badge Visibility */
-.visitor-type-badge {
-    background: var(--success) !important;
-    color: white !important;
-    padding: 0.3rem 0.8rem !important;
-    border-radius: 12px !important;
+/* Visit Type Badges */
+.visit-type-badge {
     font-size: 0.8rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.3px !important;
+    padding: 0.3rem 0.8rem !important;
+    border-radius: 12px !important;
     display: inline-block !important;
     margin-top: 0.25rem !important;
-    margin-left: 0.5rem !important;
 }
 
-.general-visitor-badge {
+.regular-visit-badge {
     background: var(--info) !important;
     color: white !important;
-    padding: 0.3rem 0.8rem !important;
-    border-radius: 12px !important;
-    font-size: 0.8rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.3px !important;
-    display: inline-block !important;
-    margin-top: 0.25rem !important;
-    margin-left: 0.5rem !important;
 }
 
-/* Enhanced Secondary Information */
-.prisoner-id,
-.table small,
-small {
+.emergency-visit-badge {
+    background: linear-gradient(135deg, var(--warning) 0%, #ff9800 100%) !important;
+    color: #000000 !important;
+    border: 2px solid #e0a800 !important;
+    animation: pulse-warning 2s infinite !important;
+}
+
+@keyframes pulse-warning {
+    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+}
+
+/* Secondary Information */
+.prisoner-id {
     color: var(--text-muted) !important;
     font-weight: 600 !important;
     font-size: 0.85rem !important;
@@ -238,20 +207,6 @@ small {
     border-radius: 15px !important;
     display: inline-block !important;
     border: 1px solid var(--border) !important;
-}
-
-/* Emergency Visit Badge */
-.emergency-badge {
-    color: var(--warning) !important;
-    font-weight: 700 !important;
-    font-size: 0.75rem !important;
-    background: rgba(255, 193, 7, 0.2) !important;
-    padding: 0.25rem 0.7rem !important;
-    border-radius: 10px !important;
-    border: 1px solid var(--warning) !important;
-    display: inline-block !important;
-    margin-top: 0.25rem !important;
-    text-transform: uppercase !important;
 }
 
 /* Enhanced Button */
@@ -396,8 +351,7 @@ small {
         margin: 1rem !important;
     }
     
-    .visitor-type-badge,
-    .general-visitor-badge {
+    .visit-type-badge {
         font-size: 0.7rem !important;
         padding: 0.2rem 0.6rem !important;
     }
@@ -426,7 +380,7 @@ small {
     <div class="d-flex justify-content-between align-items-center flex-wrap">
         <div>
             <h2><i class="bi bi-clipboard-check me-2"></i>PENDING VISIT REQUESTS</h2>
-            <p class="page-subtitle">Review and manage visitor access requests</p>
+            <p class="page-subtitle">Review and manage visitor access requests (Emergency visits listed first)</p>
         </div>
         <div class="facility-info">
             <i class="bi bi-building me-2"></i>{{ user.jail.name|default:"No Facility Assigned" }}
@@ -441,12 +395,30 @@ small {
         <div class="stat-label">Total Pending</div>
     </div>
     <div class="stat-item">
-        <span class="stat-number">0</span>
-        <div class="stat-label">Reviewed Today</div>
+        <span class="stat-number">
+            {% with emergency_count=0 %}
+                {% for visit in visits %}
+                    {% if visit.visit_type == 'EMERGENCY' %}
+                        {% with emergency_count=emergency_count|add:1 %}{% endwith %}
+                    {% endif %}
+                {% endfor %}
+                {{ emergency_count }}
+            {% endwith %}
+        </span>
+        <div class="stat-label">Emergency</div>
     </div>
     <div class="stat-item">
-        <span class="stat-number">-</span>
-        <div class="stat-label">Avg. Wait Time</div>
+        <span class="stat-number">
+            {% with regular_count=0 %}
+                {% for visit in visits %}
+                    {% if visit.visit_type != 'EMERGENCY' %}
+                        {% with regular_count=regular_count|add:1 %}{% endwith %}
+                    {% endif %}
+                {% endfor %}
+                {{ regular_count }}
+            {% endwith %}
+        </span>
+        <div class="stat-label">Regular</div>
     </div>
 </div>
 
@@ -467,47 +439,73 @@ small {
                 </thead>
                 <tbody>
                     {% for visit in visits %}
-                    <tr data-visit-id="{{ visit.id }}">
-                        <td>
-                            <div class="visitor-name" style="color: #000000 !important; background: #ffffff !important; font-weight: 800 !important; font-size: 1.1rem !important; padding: 0.4rem 0.8rem !important; border-radius: 6px !important; display: inline-block !important;">
-                                {{ visit.visitor.full_name|default:visit.visitor.username }}
-                            </div>
-                            {% if visit.visitor.is_family_member %}
-                                <span class="visitor-type-badge">
-                                    <i class="bi bi-people-fill me-1"></i>Family Member
-                                </span>
-                            {% else %}
-                                <span class="general-visitor-badge">
-                                    <i class="bi bi-person me-1"></i>General Visitor
-                                </span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div class="prisoner-name" style="color: #000000 !important; background: #ffffff !important; font-weight: 800 !important; font-size: 1.1rem !important; padding: 0.4rem 0.8rem !important; border-radius: 6px !important; display: inline-block !important;">
-                                {{ visit.prisoner.first_name }} {{ visit.prisoner.last_name }}
-                            </div>
-                            <div class="prisoner-id">
-                                <i class="bi bi-hash me-1"></i>ID: {{ visit.prisoner.prisoner_id }}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="visit-date">{{ visit.visit_date|date:"M d, Y" }}</div>
-                            <div class="visit-day">{{ visit.visit_date|date:"l" }}</div>
-                        </td>
-                        <td>
-                            <span class="time-slot">{{ visit.visit_time_slot }}</span>
-                            {% if visit.visit_type == 'EMERGENCY' %}
-                                <div class="emergency-badge">
-                                    <i class="bi bi-exclamation-triangle me-1"></i>Emergency
-                                </div>
-                            {% endif %}
-                        </td>
-                        <td class="text-end">
-                            <a href="{% url 'visit_detail_review' visit.id %}" class="btn btn-review">
-                                <i class="bi bi-search"></i>Review
-                            </a>
-                        </td>
-                    </tr>
+                        {% if visit.visit_type == 'EMERGENCY' %}
+                            <tr data-visit-id="{{ visit.id }}" class="emergency-visit-row">
+                                <td>
+                                    <div class="visitor-name">
+                                        {{ visit.visitor.full_name|default:visit.visitor.username }}
+                                    </div>
+                                    <span class="visit-type-badge emergency-visit-badge">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>EMERGENCY VISIT
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="prisoner-name">
+                                        {{ visit.prisoner.first_name }} {{ visit.prisoner.last_name }}
+                                    </div>
+                                    <div class="prisoner-id">
+                                        <i class="bi bi-hash me-1"></i>ID: {{ visit.prisoner.prisoner_id }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="visit-date">{{ visit.visit_date|date:"M d, Y" }}</div>
+                                    <div class="visit-day">{{ visit.visit_date|date:"l" }}</div>
+                                </td>
+                                <td>
+                                    <span class="time-slot">{{ visit.visit_time_slot }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{% url 'visit_detail_review' visit.id %}" class="btn btn-review">
+                                        <i class="bi bi-search"></i>Review
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% for visit in visits %}
+                        {% if visit.visit_type != 'EMERGENCY' %}
+                            <tr data-visit-id="{{ visit.id }}">
+                                <td>
+                                    <div class="visitor-name">
+                                        {{ visit.visitor.full_name|default:visit.visitor.username }}
+                                    </div>
+                                    <span class="visit-type-badge regular-visit-badge">
+                                        <i class="bi bi-calendar-check me-1"></i>REGULAR VISIT
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="prisoner-name">
+                                        {{ visit.prisoner.first_name }} {{ visit.prisoner.last_name }}
+                                    </div>
+                                    <div class="prisoner-id">
+                                        <i class="bi bi-hash me-1"></i>ID: {{ visit.prisoner.prisoner_id }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="visit-date">{{ visit.visit_date|date:"M d, Y" }}</div>
+                                    <div class="visit-day">{{ visit.visit_date|date:"l" }}</div>
+                                </td>
+                                <td>
+                                    <span class="time-slot">{{ visit.visit_time_slot }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{% url 'visit_detail_review' visit.id %}" class="btn btn-review">
+                                        <i class="bi bi-search"></i>Review
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
@@ -576,16 +574,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Enhanced row hover effects
     const tableRows = document.querySelectorAll('tbody tr[data-visit-id]');
     tableRows.forEach((row, index) => {
-        // Stagger animation
         row.style.animationDelay = `${index * 0.1}s`;
         
         row.addEventListener('mouseenter', function() {
-            this.style.borderLeft = '4px solid var(--primary)';
+            if (this.classList.contains('emergency-visit-row')) {
+                this.style.borderLeft = '4px solid var(--warning)';
+            } else {
+                this.style.borderLeft = '4px solid var(--primary)';
+            }
             this.style.paddingLeft = '12px';
         });
         
         row.addEventListener('mouseleave', function() {
-            this.style.borderLeft = 'none';
+            if (this.classList.contains('emergency-visit-row')) {
+                this.style.borderLeft = '4px solid var(--warning)';
+            } else {
+                this.style.borderLeft = 'none';
+            }
             this.style.paddingLeft = '16px';
         });
     });
