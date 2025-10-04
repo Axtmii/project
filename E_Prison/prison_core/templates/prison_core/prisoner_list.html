@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Prisoner Records{% endblock %}
 
 {% block content %}
 <style>
-/* Dark Prison Theme - Prisoner Records */
+/* Same CSS styles as your original template - keeping them unchanged */
 :root {
     --bg-dark: #1a1a1a;
     --bg-card: #2d2d2d;
@@ -29,7 +30,7 @@ body {
     color: var(--text-white) !important;
 }
 
-/* Page Header */
+/* All your existing CSS styles remain the same */
 .page-header {
     background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-accent) 100%);
     border: 2px solid var(--border);
@@ -54,7 +55,6 @@ body {
     opacity: 0.9;
 }
 
-/* Add New Prisoner Button */
 .btn-add-prisoner {
     background: linear-gradient(135deg, var(--success) 0%, #218838 100%) !important;
     border: none !important;
@@ -76,7 +76,6 @@ body {
     color: white !important;
 }
 
-/* Enhanced Card */
 .records-card {
     background: var(--bg-card) !important;
     border: 2px solid var(--border) !important;
@@ -91,7 +90,6 @@ body {
     padding: 0 !important;
 }
 
-/* Enhanced Table Styling */
 .table {
     color: var(--text-white) !important;
     margin-bottom: 0 !important;
@@ -129,7 +127,6 @@ body {
     vertical-align: middle !important;
 }
 
-/* Prisoner ID Styling */
 .prisoner-id {
     color: var(--name-black) !important;
     background: var(--text-white) !important;
@@ -143,7 +140,6 @@ body {
     border: 1px solid var(--border) !important;
 }
 
-/* Prisoner Names with Black Text on White Background */
 .prisoner-name {
     color: var(--name-black) !important;
     background: var(--text-white) !important;
@@ -157,7 +153,6 @@ body {
     text-align: center !important;
 }
 
-/* Date of Birth Styling */
 .dob-info {
     color: var(--text-muted) !important;
     font-weight: 600 !important;
@@ -168,7 +163,6 @@ body {
     display: inline-block !important;
 }
 
-/* View Details Button */
 .btn-view-details {
     background: linear-gradient(135deg, var(--primary) 0%, #0056b3 100%) !important;
     border: none !important;
@@ -193,7 +187,6 @@ body {
     margin-right: 0.5rem !important;
 }
 
-/* Empty State */
 .empty-state {
     text-align: center !important;
     padding: 4rem 2rem !important;
@@ -223,7 +216,6 @@ body {
     margin-top: 1rem !important;
 }
 
-/* Statistics Summary */
 .stats-summary {
     background: var(--bg-input) !important;
     border: 2px solid var(--border) !important;
@@ -254,7 +246,6 @@ body {
     letter-spacing: 0.5px !important;
 }
 
-/* Search and Filter Section */
 .search-section {
     background: var(--bg-input) !important;
     border: 2px solid var(--border) !important;
@@ -287,7 +278,6 @@ body {
     color: var(--text-muted) !important;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .page-header {
         padding: 1.5rem;
@@ -340,7 +330,6 @@ body {
     }
 }
 
-/* Loading Animation */
 .table-loading {
     opacity: 0;
     animation: fadeIn 0.5s ease-in forwards;
@@ -381,7 +370,7 @@ body {
     </div>
 </div>
 
-<!-- Search Section (Optional) -->
+<!-- Search Section -->
 <div class="search-section">
     <h6><i class="bi bi-search me-2"></i>Quick Search</h6>
     <div class="row">
@@ -414,12 +403,12 @@ body {
                     {% for prisoner in prisoners %}
                     <tr data-prisoner-id="{{ prisoner.prisoner_id }}">
                         <td>
-                            <div class="prisoner-id" style="color: #000000 !important; background: #ffffff !important;">
+                            <div class="prisoner-id">
                                 {{ prisoner.prisoner_id }}
                             </div>
                         </td>
                         <td>
-                            <div class="prisoner-name" style="color: #000000 !important; background: #ffffff !important;">
+                            <div class="prisoner-name">
                                 {{ prisoner.first_name }} {{ prisoner.last_name }}
                             </div>
                         </td>
@@ -428,7 +417,10 @@ body {
                                 <i class="bi bi-calendar3 me-2"></i>{{ prisoner.date_of_birth|date:"M d, Y" }}
                                 {% if prisoner.date_of_birth %}
                                     <small class="d-block mt-1" style="color: var(--text-gray);">
-                                        Age: {% now "Y" as current_year %}{{ current_year|add:"-1"|add:prisoner.date_of_birth.year|floatformat:"0" }} years
+                                        <!-- FIXED: Correct Age Calculation -->
+                                        Age: <span class="age-display" data-birth-date="{{ prisoner.date_of_birth|date:'Y-m-d' }}">
+                                            Calculating...
+                                        </span>
                                     </small>
                                 {% endif %}
                             </div>
@@ -444,7 +436,6 @@ body {
             </table>
         </div>
         {% else %}
-        <!-- Empty State -->
         <div class="empty-state">
             <i class="bi bi-people"></i>
             <h4>No Prisoner Records Found</h4>
@@ -459,6 +450,38 @@ body {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // ✅ FIXED: Correct Age Calculation Function
+    function calculateAge(birthDate) {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        
+        if (birth > today) {
+            return 0; // Future date
+        }
+        
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        
+        // If birthday hasn't occurred this year, subtract 1
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        
+        return age;
+    }
+    
+    // Calculate and display ages correctly
+    const ageDisplays = document.querySelectorAll('.age-display');
+    ageDisplays.forEach(ageDisplay => {
+        const birthDate = ageDisplay.getAttribute('data-birth-date');
+        if (birthDate) {
+            const age = calculateAge(birthDate);
+            ageDisplay.textContent = `${age} years`;
+        } else {
+            ageDisplay.textContent = 'Unknown';
+        }
+    });
+    
     // Force name and ID visibility on page load
     const prisonerNames = document.querySelectorAll('.prisoner-name');
     const prisonerIds = document.querySelectorAll('.prisoner-id');
@@ -500,7 +523,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Enhanced row hover effects
     const tableRows = document.querySelectorAll('tbody tr[data-prisoner-id]');
     tableRows.forEach((row, index) => {
-        // Stagger animation
         row.style.animationDelay = `${index * 0.1}s`;
         
         row.addEventListener('mouseenter', function() {
