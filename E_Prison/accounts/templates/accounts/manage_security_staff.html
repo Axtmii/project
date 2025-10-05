@@ -411,14 +411,14 @@ small.text-muted {
         <span class="stat-number">{{ security_staff|length }}</span>
         <div class="stat-label">Active Staff</div>
     </div>
-    <div class="stat-item">
+    {% comment %} <div class="stat-item">
         <span class="stat-number">{{ user.jail.name|length|default:"0" }}</span>
         <div class="stat-label">Facility Code</div>
     </div>
     <div class="stat-item">
         <span class="stat-number">24/7</span>
         <div class="stat-label">Security Coverage</div>
-    </div>
+    </div> {% endcomment %}
 </div>
 
 <div class="row g-4">

@@ -92,19 +92,16 @@ label {
     line-height: 1.4;
 }
 
-/* Override any Bootstrap default label colors */
 .form-label * {
     color: var(--text-white) !important;
 }
 
-/* Ensure icons in labels are visible */
 .form-label i,
 label i {
     color: var(--primary) !important;
     margin-right: 0.5rem !important;
 }
 
-/* Special styling for required fields */
 .form-label.required-field {
     border-left: 3px solid var(--primary);
     padding-left: 0.75rem;
@@ -150,7 +147,6 @@ label i {
     font-style: italic;
 }
 
-/* Input with errors */
 .form-control.is-invalid {
     border-color: var(--border-error) !important;
     background: rgba(255, 68, 68, 0.05) !important;
@@ -168,6 +164,49 @@ input[type="password"].form-control {
     height: 3.5rem !important;
     padding: 1rem 1.25rem !important;
     font-size: 1rem !important;
+}
+
+/* 👁️ PASSWORD VISIBILITY TOGGLE */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper .form-control {
+    padding-right: 3.5rem !important;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 3.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.password-toggle-btn:hover {
+    color: var(--primary);
+    background: rgba(0, 153, 255, 0.1);
+    border-radius: 0 6px 6px 0;
+}
+
+.password-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.password-toggle-btn i {
+    transition: all 0.3s ease;
 }
 
 /* PERFECTED - Textarea Styling */
@@ -219,7 +258,6 @@ select.form-control option {
     box-shadow: 0 0 0 0.25rem rgba(0, 153, 255, 0.25);
 }
 
-/* File input button styling */
 .form-control[type="file"]::-webkit-file-upload-button {
     background: var(--primary);
     color: white;
@@ -528,6 +566,15 @@ hr {
         height: 3rem !important;
     }
     
+    .password-wrapper .form-control {
+        padding-right: 3rem !important;
+    }
+    
+    .password-toggle-btn {
+        width: 3rem;
+        font-size: 1rem;
+    }
+    
     .image-upload-section {
         padding: 1.5rem;
     }
@@ -762,7 +809,7 @@ hr {
             {% endfor %}
         </div>
 
-        <!-- Security Section -->
+        <!-- Security Section with Password Visibility Toggle -->
         <div class="form-section">
             <h6><i class="bi bi-shield-lock me-2"></i>Account Security</h6>
             
@@ -775,7 +822,14 @@ hr {
                             {% endif %}
                             {{ field.label }}<span class="required">*</span>
                         </label>
-                        {{ field }}
+                        
+                        <!-- 👁️ Password field with toggle button -->
+                        <div class="password-wrapper">
+                            {{ field }}
+                            <button type="button" class="password-toggle-btn" data-target="{{ field.id_for_label }}" onclick="togglePassword(this)">
+                                <i class="bi bi-eye" data-show-icon="bi-eye" data-hide-icon="bi-eye-slash"></i>
+                            </button>
+                        </div>
                         
                         {% if field.name == 'password1' %}
                             <div class="help-text">Create a secure password (minimum 8 characters with letters and numbers)</div>
@@ -822,6 +876,25 @@ hr {
 </div>
 
 <script>
+// 👁️ PASSWORD VISIBILITY TOGGLE FUNCTION
+function togglePassword(button) {
+    const targetId = button.getAttribute('data-target');
+    const passwordInput = document.getElementById(targetId);
+    const icon = button.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+        button.setAttribute('title', 'Hide password');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+        button.setAttribute('title', 'Show password');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Enhanced form validation and styling
     const form = document.getElementById('registrationForm');
@@ -830,7 +903,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add proper form control classes
     const inputs = form.querySelectorAll('input, textarea, select');
     inputs.forEach(input => {
-        if (!input.classList.contains('form-control')) {
+        if (!input.classList.contains('form-control') && input.type !== 'checkbox') {
             input.classList.add('form-control');
         }
         
@@ -982,6 +1055,11 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('loading');
             setTimeout(() => this.classList.remove('loading'), 500);
         });
+    });
+    
+    // Add title tooltips to password toggle buttons
+    document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+        btn.setAttribute('title', 'Show password');
     });
 });
 </script>
