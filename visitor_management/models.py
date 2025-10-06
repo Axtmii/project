@@ -36,5 +36,6 @@ class EmergencyAlert(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
+        
         return f"Alert: {self.message[:50]}"
 
