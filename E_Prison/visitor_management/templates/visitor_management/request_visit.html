@@ -876,7 +876,6 @@
                                         </button>
                                     </div>
                                 {% else %}
-                                    <!-- ✅ ENHANCED: Cooldown Message with Dates -->
                                     <div class="emergency-locked-message">
                                         <i class="bi bi-lock-fill lock-icon"></i>
                                         <h6>🚨 Emergency Visit Temporarily Unavailable</h6>
@@ -956,7 +955,7 @@
     </div>
 </div>
 
-<script>
+<<script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('search-form');
     const searchBtn = document.getElementById('search-btn');
@@ -988,6 +987,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// ✅ FIXED: Validate regular visit - DO NOT PREVENT SUBMISSION
 function validateRegularVisit(prisonerId) {
     const dateInput = document.getElementById(`visit_date_${prisonerId}`);
     const timeSelect = document.getElementById(`time_slot_${prisonerId}`);
@@ -1004,17 +1004,31 @@ function validateRegularVisit(prisonerId) {
         return false;
     }
     
-    event.target.disabled = true;
-    event.target.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
-    return true;
+    // ✅ Show loading but DON'T prevent submission
+    const form = document.getElementById(`visit_form_${prisonerId}`);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    if (submitBtn) {
+        // Use setTimeout to allow form submission to happen first
+        setTimeout(() => {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+        }, 0);
+    }
+    
+    console.log('✅ Regular visit form validation passed, submitting...');
+    return true; // Allow form to submit
 }
 
+// ✅ Set regular visit (for two-button layout)
 function setRegularVisit(prisonerId) {
     const form = document.getElementById(`visit_form_${prisonerId}`);
     const dateInput = document.getElementById(`visit_date_${prisonerId}`);
     const timeSelect = document.getElementById(`time_slot_${prisonerId}`);
     const hiddenInput = document.getElementById(`visit_type_${prisonerId}`);
     const emergencyInfo = document.getElementById(`emergency_info_${prisonerId}`);
+    
+    console.log('🔍 Regular visit button clicked');
     
     if (emergencyInfo) emergencyInfo.style.display = 'none';
     
@@ -1026,14 +1040,19 @@ function setRegularVisit(prisonerId) {
     }
     
     hiddenInput.value = 'REGULAR';
+    console.log(`✅ Set visit_type to: ${hiddenInput.value}`);
     
     const regularBtn = form.querySelector('.btn-success');
-    regularBtn.disabled = true;
-    regularBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+    if (regularBtn) {
+        regularBtn.disabled = true;
+        regularBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+    }
     
+    console.log('✅ Submitting regular visit form...');
     form.submit();
 }
 
+// ✅ Emergency visit
 function setEmergencyVisit(prisonerId, relationship) {
     console.log('🚨 Emergency button clicked');
     
@@ -1105,4 +1124,5 @@ function clearSearch() {
     document.getElementById('prisoner_name').focus();
 }
 </script>
+
 {% endblock %}
