@@ -21,6 +21,7 @@ class User(AbstractUser):
         ("daughter", "Daughter"),
         ("brother", "Brother"),
         ("sister", "Sister"),
+        
         # ("grandfather", "Grandfather"),
         # ("grandmother", "Grandmother"),
         # ("uncle", "Uncle"),
