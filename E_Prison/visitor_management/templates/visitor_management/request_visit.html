@@ -372,7 +372,6 @@
     margin-top: 0.5rem;
 }
 
-/* Dynamic grid based on available buttons */
 .visit-actions.has-emergency {
     grid-template-columns: 1fr 1fr;
 }
@@ -426,7 +425,6 @@
     border-color: #d39e00;
 }
 
-/* Emergency Button Style Enhancement */
 .btn-emergency {
     position: relative;
     overflow: hidden;
@@ -447,26 +445,105 @@
     left: 100%;
 }
 
-/* Debug Box Styles */
-.debug-box {
-    margin: 10px 0;
-    padding: 8px 12px;
-    border-radius: 5px;
+/* Emergency Info Box */
+.emergency-info-box {
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #ffc107;
+    display: none;
+}
+
+.emergency-info-box h6 {
+    color: #ffc107;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.emergency-info-box ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+    color: #ffcc66;
     font-size: 0.8rem;
+}
+
+.emergency-info-box li {
+    margin-bottom: 0.25rem;
+}
+
+/* Emergency Locked Message */
+.emergency-locked-message {
+    background: rgba(220, 53, 69, 0.15);
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    color: #ff6b6b;
+    text-align: center;
+}
+
+.emergency-locked-message i.lock-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.emergency-locked-message h6 {
+    color: #ff6b6b;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.emergency-locked-message p {
+    color: #ffaaaa;
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+}
+
+/* Last Emergency Visit Info */
+.last-emergency-info {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+}
+
+.last-emergency-info p {
+    margin: 0;
+    color: #ffcc66;
+    font-size: 0.85rem;
     font-weight: 600;
-    font-family: monospace;
 }
 
-.debug-success {
-    background: #28a745;
-    color: white;
-    border: 2px solid #20c997;
+.last-emergency-info strong {
+    color: #ffc107;
 }
 
-.debug-error {
-    background: #dc3545;
-    color: white;
-    border: 2px solid #ff6b6b;
+/* Countdown Timer */
+.countdown-timer {
+    background: rgba(255, 193, 7, 0.15);
+    border: 2px solid #ffc107;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.75rem;
+    font-weight: 700;
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+
+.countdown-timer small {
+    display: block;
+    margin-top: 0.5rem;
+    opacity: 0.85;
+    font-size: 0.8rem;
 }
 
 /* Results Header */
@@ -666,14 +743,12 @@
                 {% for prisoner in prisoners %}
                 {% if user.related_prisoner and user.related_prisoner.id == prisoner.id %}
                     <div class="prisoner-card family-member">
-                        <!-- ID Card Header -->
                         <div class="id-card-header family-member">
                             <i class="bi bi-people-fill"></i>
                             <h6>FAMILY MEMBER IDENTIFICATION</h6>
                         </div>
                 {% else %}
                     <div class="prisoner-card">
-                        <!-- ID Card Header -->
                         <div class="id-card-header">
                             <i class="bi bi-person-vcard-fill"></i>
                             <h6>PRISONER IDENTIFICATION CARD</h6>
@@ -682,7 +757,6 @@
                     
                     <!-- ID Card Body -->
                     <div class="id-card-body">
-                        <!-- Photo Section -->
                         <div class="id-photo-section">
                             {% if user.related_prisoner and user.related_prisoner.id == prisoner.id %}
                                 <div class="id-photo-frame family-member">
@@ -703,7 +777,6 @@
                             </div>
                         </div>
                         
-                        <!-- Details Section -->
                         <div class="id-details-section">
                             <div class="prisoner-name-block">
                                 <h5 class="prisoner-name">{{ prisoner.first_name }} {{ prisoner.last_name }}</h5>
@@ -744,19 +817,33 @@
                             <h6>REQUEST VISIT APPOINTMENT</h6>
                         </div>
                         
-                        <!-- FIXED FORM WITH PROPER VISIT TYPE HANDLING -->
-                        <form method="post" class="visit-form" onsubmit="debugSubmit(event)">
+                        <!-- Emergency Info Box -->
+                        <div class="emergency-info-box" id="emergency_info_{{ prisoner.id }}">
+                            <h6>
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                Emergency Visit - Important Information
+                            </h6>
+                            <ul>
+                                <li>Visit must be completed within <strong>24 hours</strong> of approval</li>
+                                <li>No date/time selection needed - immediate priority processing</li>
+                                <li>You will be notified within 2-4 hours of approval status</li>
+                                <li>20-day cooldown period applies after emergency visit</li>
+                                <li>Valid only for genuine emergency situations</li>
+                            </ul>
+                        </div>
+                        
+                        <form method="post" class="visit-form" id="visit_form_{{ prisoner.id }}">
                             {% csrf_token %}
                             <input type="hidden" name="prisoner_id" value="{{ prisoner.id }}">
                             
-                            <div class="form-row">
+                            <div class="form-row" id="datetime_section_{{ prisoner.id }}">
                                 <div class="form-group">
                                     <label for="visit_date_{{ prisoner.id }}">
                                         <i class="bi bi-calendar-event"></i>
                                         Visit Date
                                     </label>
                                     <input type="date" name="visit_date" id="visit_date_{{ prisoner.id }}" 
-                                           class="form-control" required min="{% now 'Y-m-d' %}">
+                                           class="form-control" min="{% now 'Y-m-d' %}">
                                 </div>
                                 
                                 <div class="form-group">
@@ -764,8 +851,7 @@
                                         <i class="bi bi-clock"></i>
                                         Time Slot
                                     </label>
-                                    <select name="time_slot" id="time_slot_{{ prisoner.id }}" 
-                                            class="form-select" required>
+                                    <select name="time_slot" id="time_slot_{{ prisoner.id }}" class="form-select">
                                         <option value="">-- Select Time --</option>
                                         <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
                                         <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
@@ -774,57 +860,70 @@
                                 </div>
                             </div>
                             
-                            <!-- FIXED: Proper visit type handling -->
                             {% if user.related_prisoner and user.relationship_to_prisoner and user.related_prisoner.id == prisoner.id %}
-                                <!-- DEBUG: Emergency button should show -->
-                                <div class="debug-box debug-success">
-                                    ✅ EMERGENCY BUTTON ACTIVE
-                                    <br>User: {{ user.username }}
-                                    <br>Related Prisoner ID: {{ user.related_prisoner.id }}
-                                    <br>Current Prisoner ID: {{ prisoner.id }}
-                                    <br>Relationship: {{ user.relationship_to_prisoner }}
-                                </div>
-                                
-                                <div class="visit-actions has-emergency">
-                                    <!-- Hidden field to store visit type -->
-                                    <input type="hidden" name="visit_type" id="visit_type_{{ prisoner.id }}" value="REGULAR">
+                                {% if can_request_emergency %}
+                                    <div class="visit-actions has-emergency">
+                                        <input type="hidden" name="visit_type" id="visit_type_{{ prisoner.id }}" value="REGULAR">
+                                        
+                                        <button type="button" class="btn btn-success" onclick="setRegularVisit('{{ prisoner.id }}')">
+                                            <i class="bi bi-calendar-check"></i>
+                                            REGULAR VISIT
+                                        </button>
+                                        
+                                        <button type="button" class="btn btn-warning btn-emergency" onclick="setEmergencyVisit('{{ prisoner.id }}', '{{ user.relationship_to_prisoner }}')">
+                                            <i class="bi bi-exclamation-triangle-fill"></i>
+                                            EMERGENCY VISIT
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <!-- ✅ ENHANCED: Cooldown Message with Dates -->
+                                    <div class="emergency-locked-message">
+                                        <i class="bi bi-lock-fill lock-icon"></i>
+                                        <h6>🚨 Emergency Visit Temporarily Unavailable</h6>
+                                        <p>
+                                            You have recently used an emergency visit request.<br>
+                                            Emergency visits are limited to once every 20 days for security reasons.
+                                        </p>
+                                        
+                                        {% if last_emergency_date %}
+                                        <div class="last-emergency-info">
+                                            <p>
+                                                <i class="bi bi-calendar-x"></i> 
+                                                <strong>Last Emergency Visit:</strong> {{ last_emergency_date|date:"F d, Y" }}
+                                            </p>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <div class="countdown-timer">
+                                            ⏱️ Next emergency visit available in: <strong>{{ days_until_next_emergency }} day{{ days_until_next_emergency|pluralize }}</strong>
+                                            
+                                            {% if next_available_date %}
+                                            <small>
+                                                📅 Available from: <strong>{{ next_available_date|date:"F d, Y" }}</strong>
+                                            </small>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <p style="margin-top: 0.75rem; font-size: 0.85rem;">
+                                            <i class="bi bi-info-circle"></i> You can still request regular visits during this period
+                                        </p>
+                                    </div>
                                     
-                                    <button type="button" class="btn btn-success" onclick="setVisitType('{{ prisoner.id }}', 'REGULAR')">
-                                        <i class="bi bi-calendar-check"></i>
-                                        REGULAR VISIT
-                                    </button>
-                                    
-                                    <button type="button" class="btn btn-warning btn-emergency" onclick="setEmergencyVisit('{{ prisoner.id }}')">
-                                        <i class="bi bi-exclamation-triangle-fill"></i>
-                                        EMERGENCY VISIT
-                                    </button>
-                                    
-                                    <!-- Hidden submit button triggered by JavaScript -->
-                                    <button type="submit" id="submit_{{ prisoner.id }}" style="display: none;">Submit</button>
-                                </div>
+                                    <div class="visit-actions no-emergency">
+                                        <input type="hidden" name="visit_type" value="REGULAR">
+                                        <button type="submit" class="btn btn-success" onclick="return validateRegularVisit('{{ prisoner.id }}')">
+                                            <i class="bi bi-calendar-check"></i>
+                                            REQUEST REGULAR VISIT
+                                        </button>
+                                    </div>
+                                {% endif %}
                             {% else %}
-                                <!-- DEBUG: Emergency button won't show -->
-                                <div class="debug-box debug-error">
-                                    ❌ NO EMERGENCY BUTTON - DEBUG INFO:
-                                    <br>User: {{ user.username }}
-                                    <br>Related Prisoner: {{ user.related_prisoner|default:"None" }}
-                                    {% if user.related_prisoner %}
-                                        <br>Related Prisoner ID: {{ user.related_prisoner.id }}
-                                    {% endif %}
-                                    <br>Current Prisoner ID: {{ prisoner.id }}
-                                    <br>Relationship: {{ user.relationship_to_prisoner|default:"None" }}
-                                    <br>Match: {% if user.related_prisoner and user.related_prisoner.id == prisoner.id %}YES{% else %}NO{% endif %}
-                                </div>
-                                
                                 <div class="visit-actions no-emergency">
-                                    <!-- Hidden field for regular visits only -->
                                     <input type="hidden" name="visit_type" value="REGULAR">
-                                    
-                                    <button type="submit" class="btn btn-success">
+                                    <button type="submit" class="btn btn-success" onclick="return validateRegularVisit('{{ prisoner.id }}')">
                                         <i class="bi bi-calendar-check"></i>
-                                        REGULAR VISIT
+                                        REQUEST VISIT
                                     </button>
-                                    
                                     <small style="color: var(--text-muted); text-align: center; margin-top: 0.5rem; display: block;">
                                         <i class="bi bi-info-circle"></i>
                                         Emergency visits available for family members only
@@ -864,7 +963,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingSpinner = document.getElementById('loading-spinner');
     const resultsContainer = document.querySelector('.results-container');
     
-    // Search form submission
     searchForm.addEventListener('submit', function() {
         loadingSpinner.style.display = 'block';
         resultsContainer.style.display = 'none';
@@ -872,7 +970,6 @@ document.addEventListener('DOMContentLoaded', function() {
         searchBtn.innerHTML = '<i class="bi bi-search me-2"></i>Searching...';
     });
     
-    // Set date limits
     document.querySelectorAll('input[type="date"]').forEach(input => {
         const today = new Date().toISOString().split('T')[0];
         const maxDate = new Date();
@@ -881,107 +978,125 @@ document.addEventListener('DOMContentLoaded', function() {
         input.setAttribute('max', maxDate.toISOString().split('T')[0]);
     });
     
-    // Add visual feedback for emergency buttons
     document.querySelectorAll('.btn-emergency').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
             this.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.5)';
         });
-        
         btn.addEventListener('mouseleave', function() {
             this.style.boxShadow = '';
         });
     });
 });
 
-// FIXED: Handle visit type selection
-function setVisitType(prisonerId, visitType) {
-    const form = document.querySelector(`#visit_type_${prisonerId}`).closest('form');
-    const hiddenInput = document.getElementById(`visit_type_${prisonerId}`);
-    const submitBtn = document.getElementById(`submit_${prisonerId}`);
+function validateRegularVisit(prisonerId) {
+    const dateInput = document.getElementById(`visit_date_${prisonerId}`);
+    const timeSelect = document.getElementById(`time_slot_${prisonerId}`);
     
-    console.log(`🔍 Setting visit type to: ${visitType}`);
-    hiddenInput.value = visitType;
-    
-    // Validate form
-    const dateInput = form.querySelector('input[name="visit_date"]');
-    const timeSelect = form.querySelector('select[name="time_slot"]');
-    
-    if (!dateInput.value || !timeSelect.value) {
-        alert('Please select both date and time slot.');
-        return;
+    if (!dateInput.value) {
+        alert('⚠️ Please select a visit date.');
+        dateInput.focus();
+        return false;
     }
     
-    // Show loading state
-    const regularBtn = form.querySelector('.btn-success');
-    const emergencyBtn = form.querySelector('.btn-emergency');
-    
-    if (visitType === 'REGULAR') {
-        regularBtn.disabled = true;
-        regularBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
-    } else {
-        if (emergencyBtn) {
-            emergencyBtn.disabled = true;
-            emergencyBtn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Processing Emergency...';
-        }
+    if (!timeSelect.value) {
+        alert('⚠️ Please select a time slot.');
+        timeSelect.focus();
+        return false;
     }
     
-    // Submit form
-    console.log(`✅ Submitting form with visit_type: ${visitType}`);
-    submitBtn.click();
+    event.target.disabled = true;
+    event.target.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+    return true;
 }
 
-function setEmergencyVisit(prisonerId) {
+function setRegularVisit(prisonerId) {
+    const form = document.getElementById(`visit_form_${prisonerId}`);
+    const dateInput = document.getElementById(`visit_date_${prisonerId}`);
+    const timeSelect = document.getElementById(`time_slot_${prisonerId}`);
+    const hiddenInput = document.getElementById(`visit_type_${prisonerId}`);
+    const emergencyInfo = document.getElementById(`emergency_info_${prisonerId}`);
+    
+    if (emergencyInfo) emergencyInfo.style.display = 'none';
+    
+    if (!dateInput.value || !timeSelect.value) {
+        alert('⚠️ Please select both date and time slot for regular visit.');
+        if (!dateInput.value) dateInput.focus();
+        else timeSelect.focus();
+        return false;
+    }
+    
+    hiddenInput.value = 'REGULAR';
+    
+    const regularBtn = form.querySelector('.btn-success');
+    regularBtn.disabled = true;
+    regularBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+    
+    form.submit();
+}
+
+function setEmergencyVisit(prisonerId, relationship) {
     console.log('🚨 Emergency button clicked');
+    
+    const form = document.getElementById(`visit_form_${prisonerId}`);
+    const hiddenInput = document.getElementById(`visit_type_${prisonerId}`);
+    const emergencyInfo = document.getElementById(`emergency_info_${prisonerId}`);
+    const dateTimeSection = document.getElementById(`datetime_section_${prisonerId}`);
+    
+    if (emergencyInfo) emergencyInfo.style.display = 'block';
+    
+    const relationshipText = relationship.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     
     const confirmed = confirm(`🚨 EMERGENCY VISIT REQUEST
 
-⚠️ Important Information:
-• Emergency visits have a 20-day cooldown period
-• Requires special approval from prison administration
-• Processed with high priority
-• Subject to availability and security clearance
+👤 Your Relationship: ${relationshipText}
 
-📝 Please ensure this is a genuine emergency situation.
+⚠️ CRITICAL INFORMATION:
 
-Continue with emergency visit request?`);
+✓ Visit must be completed within 24 HOURS of approval
+✓ NO date/time selection needed - immediate priority processing  
+✓ Prison administration will contact you within 2-4 hours
+✓ Once approved, you MUST visit within 24 hours
+✓ 20-day cooldown period applies after this visit
+✓ Should ONLY be used for genuine family emergencies
+
+📍 IMPORTANT NOTES:
+• You will be notified of approved visit time via phone/email
+• Subject to security clearance and availability
+• Misuse may result in permanent loss of emergency visit privileges
+• This request will be reviewed by prison administration
+
+⚠️ WARNING: False emergency requests are taken seriously and may result in criminal charges.
+
+Do you confirm this is a genuine emergency situation requiring immediate visit?`);
     
     if (confirmed) {
         console.log('✅ Emergency visit confirmed');
-        setVisitType(prisonerId, 'EMERGENCY');
+        
+        hiddenInput.value = 'EMERGENCY';
+        
+        const dateInput = document.getElementById(`visit_date_${prisonerId}`);
+        const timeSelect = document.getElementById(`time_slot_${prisonerId}`);
+        
+        if (dateInput) dateInput.removeAttribute('required');
+        if (timeSelect) timeSelect.removeAttribute('required');
+        
+        if (dateTimeSection) {
+            dateTimeSection.style.opacity = '0.3';
+            dateTimeSection.style.pointerEvents = 'none';
+        }
+        
+        const emergencyBtn = form.querySelector('.btn-emergency');
+        if (emergencyBtn) {
+            emergencyBtn.disabled = true;
+            emergencyBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing Emergency...';
+        }
+        
+        console.log(`✅ Submitting EMERGENCY visit - no date/time required`);
+        form.submit();
     } else {
         console.log('❌ Emergency visit cancelled');
+        if (emergencyInfo) emergencyInfo.style.display = 'none';
     }
-}
-
-// ENHANCED DEBUG: Function to debug form submission
-function debugSubmit(event) {
-    const form = event.target;
-    const formData = new FormData(form);
-    
-    console.clear();
-    console.log('🚨🚨🚨 FORM SUBMISSION DEBUG 🚨🚨🚨');
-    console.log('='.repeat(50));
-    
-    console.log('🔍 ALL FORM DATA:');
-    for (let [key, value] of formData.entries()) {
-        console.log(`  - ${key}: "${value}"`);
-    }
-    
-    const visitType = formData.get('visit_type');
-    console.log('\n🔍 VISIT TYPE CHECK:');
-    console.log(`  - visit_type: "${visitType}"`);
-    console.log(`  - Is EMERGENCY?: ${visitType === 'EMERGENCY'}`);
-    
-    if (visitType === 'EMERGENCY') {
-        console.log('\n🚨 EMERGENCY VISIT CONFIRMED!');
-        alert('🚨 EMERGENCY VISIT DETECTED!\n\nForm submitting with visit_type: EMERGENCY');
-    } else {
-        console.log('\nℹ️ Regular visit');
-        alert(`ℹ️ Form submitting with visit_type: ${visitType}`);
-    }
-    
-    console.log('='.repeat(50));
-    return true;
 }
 
 function clearSearch() {
